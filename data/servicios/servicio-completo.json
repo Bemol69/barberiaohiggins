@@ -1,0 +1,19 @@
+{
+  "descripcion": "",
+  "incluye": [
+    "Corte",
+    "Barba",
+    "Cejas",
+    "Lavado",
+    "Asesoría"
+  ],
+  "nota": "",
+  "etiqueta": "El más completo",
+  "barberos": [],
+  "visible": true,
+  "nombre": "Servicio completo",
+  "categoria": "cabello-y-barba",
+  "precio": 29990,
+  "duracion": 60,
+  "orden": 10
+}

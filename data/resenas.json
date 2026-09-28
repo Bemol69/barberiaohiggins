@@ -1,0 +1,12 @@
+{
+  "resenas": [
+    { "nombre": "Emiliano", "servicio": "Corte de cabello", "estrellas": 5, "texto": "Como siempre excelente servicio, Benja un 7. Todos muy amables, local en buen estado, limpio, buen aroma, muy bien iluminado y la música acorde. O sea, todo un 10 de 10." },
+    { "nombre": "Felipe", "servicio": "Corte de cabello", "estrellas": 5, "texto": "Lugar impecable, personal muy agradable y profesional, buena atención desde la recepción hasta el corte de pelo. Recomendado." },
+    { "nombre": "Joaquín", "servicio": "Corte + cejas", "estrellas": 5, "texto": "Corte 10 de 10, servicio excelente y de calidad, completamente recomendado." },
+    { "nombre": "Paulina", "servicio": "Corte de cabello", "estrellas": 5, "texto": "Excelente atención. Resultado perfecto con buena asesoría." },
+    { "nombre": "Manuel", "servicio": "Corte + barba", "estrellas": 5, "texto": "Como siempre muy buen servicio, y si me preguntan por algún barbero, siempre lo recomiendo." },
+    { "nombre": "Mahuel", "servicio": "Corte de niño", "estrellas": 5, "texto": "Muy buena atención, lugar limpio, consultan todo según el gusto, además de sugerencias. Quedamos muy conformes." },
+    { "nombre": "Ronaldo", "servicio": "Corte de cabello", "estrellas": 5, "texto": "Muy buena atención, Cristian excelente profesional y muy buen local." },
+    { "nombre": "Ernesto", "servicio": "Corte + barba", "estrellas": 5, "texto": "Muy buena la atención, el ambiente y el profesional muy capacitado en su rubro. Recomendado cien por ciento." }
+  ]
+}

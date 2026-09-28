@@ -1,0 +1,13 @@
+{
+  "descripcion": "",
+  "incluye": [],
+  "nota": "",
+  "etiqueta": "",
+  "barberos": [],
+  "visible": true,
+  "nombre": "Corte + barba",
+  "categoria": "cabello-y-barba",
+  "precio": 20000,
+  "duracion": 45,
+  "orden": 30
+}

@@ -1,0 +1,17 @@
+{
+  "descripcion": "",
+  "incluye": [],
+  "nota": "",
+  "etiqueta": "",
+  "barberos": [
+    "criss",
+    "daylan",
+    "alejandro"
+  ],
+  "visible": true,
+  "nombre": "Tintura + corte de barba",
+  "categoria": "barba",
+  "precio": 18000,
+  "duracion": 60,
+  "orden": 20
+}

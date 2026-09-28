@@ -1,0 +1,13 @@
+{
+  "descripcion": "Corte de precisión solo a tijera.",
+  "incluye": [],
+  "nota": "",
+  "etiqueta": "",
+  "barberos": [],
+  "visible": true,
+  "nombre": "Corte solo con tijera",
+  "categoria": "cortes",
+  "precio": 13000,
+  "duracion": 30,
+  "orden": 30
+}

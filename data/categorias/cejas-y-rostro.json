@@ -1,0 +1,8 @@
+{
+  "nombre": "Cejas y rostro",
+  "descripcion": "Perfilado de cejas con navaja, cera y limpieza facial.",
+  "foto": "/img/fotos/servicio-cejas-rostro.webp",
+  "icono": "navaja",
+  "orden": 40,
+  "visible": true
+}

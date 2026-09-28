@@ -1,33 +1,47 @@
 {
   "whatsapp": "56961619679",
+  "telefono": "+56 9 6161 9679",
+  "email": "barberiaohiggins@gmail.com",
   "instagram": "barberiaohiggins",
-  "tiktok": "",
-  "email": "",
+  "tiktok": "barberia.ohiggins",
+  "facebook": "https://www.facebook.com/share/1BSgcGCAor/",
   "direccion": "Alcázar 320",
   "ciudad": "Rancagua",
   "region": "Región de O'Higgins",
-  "envios": "Centro de Rancagua",
+  "referencia": "Centro de Rancagua",
+  "latitud": -34.1695737,
+  "longitud": -70.7390969,
+  "mapa_url": "https://www.google.com/maps/search/?api=1&query=Barber%C3%ADa%20O%27Higgins%2C%20Alc%C3%A1zar%20320%2C%20Rancagua&query_place_id=ChIJ8Q8BIEBDY5YRp_mf_dEdJa8",
   "calificacion": "4.9",
   "resenas": 101,
-  "horario_dias": "Lunes a viernes",
-  "hora_abre": "10:00",
-  "hora_cierra": "20:00",
-  "hora_abre_sabado": "10:00",
-  "hora_cierra_sabado": "17:00",
-  "horario_domingo": "Domingo",
-  "hora_abre_domingo": "",
-  "hora_cierra_domingo": "",
-  "sucursal1_nombre": "Barbería O'Higgins",
-  "sucursal1_direccion": "Alcázar 320",
-  "sucursal1_referencia": "Centro de Rancagua",
-  "sucursal1_mapa": "",
-  "sucursal2_nombre": "",
-  "sucursal2_direccion": "",
-  "sucursal2_referencia": "",
-  "sucursal2_mapa": "",
-  "barberos": ["Criss", "Daylan", "Benja", "Alejandro"],
-  "galeria": [],
-  "hero_titulo": "Tradición y estilo.",
-  "hero_destacado": "Con carácter.",
-  "hero_bajada": "Cortes clásicos y modernos, perfilado de barba y masajes de relajación en el centro de Rancagua, en un ambiente cálido y profesional."
+  "horario": {
+    "lunes": {
+      "abre": "10:00",
+      "cierra": "20:00"
+    },
+    "martes": {
+      "abre": "10:00",
+      "cierra": "20:00"
+    },
+    "miercoles": {
+      "abre": "10:00",
+      "cierra": "20:00"
+    },
+    "jueves": {
+      "abre": "10:00",
+      "cierra": "20:00"
+    },
+    "viernes": {
+      "abre": "10:00",
+      "cierra": "20:00"
+    },
+    "sabado": {
+      "abre": "10:00",
+      "cierra": "17:00"
+    },
+    "domingo": {
+      "abre": "",
+      "cierra": ""
+    }
+  }
 }

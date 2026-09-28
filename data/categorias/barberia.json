@@ -1,6 +1,0 @@
-{
-  "nombre": "Barbería",
-  "orden": 10,
-  "visible": true,
-  "productos": ["corte-de-cabello", "corte-premium", "perfilado-de-barba", "corte-y-barba"]
-}

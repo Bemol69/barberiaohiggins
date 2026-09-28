@@ -1,379 +1,332 @@
-// ===== CONFIGURACIÓN =====
-// Datos de la barbería: los inserta scripts/build.mjs desde tienda.config.json y data/ajustes.json
-const TIENDA = %%TIENDA_JSON%%;
+// Barbería O'Higgins · interacción de la web (sin librerías)
+// Los datos (horario, servicios, equipo, galería) los escribe scripts/build.mjs en <script id="web-data">
+const DATA = JSON.parse(document.getElementById('web-data')?.textContent || '{}');
 document.documentElement.classList.add('js');
 
-// WhatsApp en formato internacional, solo dígitos (Chile: 56 + 9 + 8 dígitos)
-const WHATSAPP_NUMBER = TIENDA.whatsapp;
-
-// Horario por día (0 = domingo, 6 = sábado). Si el domingo no tiene horario, se considera cerrado.
-const HORARIO = (day) =>
-  day === 0
-    ? (TIENDA.hora_abre_domingo && TIENDA.hora_cierra_domingo ? [TIENDA.hora_abre_domingo, TIENDA.hora_cierra_domingo] : null)
-    : day === 6
-      ? [TIENDA.hora_abre_sabado || TIENDA.hora_abre, TIENDA.hora_cierra_sabado || TIENDA.hora_cierra]
-      : [TIENDA.hora_abre, TIENDA.hora_cierra];
-const SLOT_MIN = 30; // cada cuántos minutos se ofrecen horas en el formulario
-const DIAS = ['domingo', 'lunes', 'martes', 'miércoles', 'jueves', 'viernes', 'sábado'];
-
-// Servicios y categorías se editan desde el panel /admin (data/productos, data/categorias)
-// y se publican juntos en data/catalogo.json (lo genera scripts/build.mjs)
-let PRODUCTS = [];
-let FILTERS = [['todos', 'Todos']];
-
-const CUSTOM = { id: 'asesoria', name: 'No sé aún, quiero asesoría', price: 0 };
-
-// Servicios que se pueden sumar al principal
-const EXTRAS = ['Perfilado de barba', 'Masaje de relajación'];
-
-const SORTS = {
-  destacados: null,
-  'precio-asc': (a, b) => (a.price || Infinity) - (b.price || Infinity),
-  'precio-desc': (a, b) => b.price - a.price,
-};
-
-// ===== UTILIDADES =====
-const clp = (n) => '$' + n.toLocaleString('es-CL');
-const precioHtml = (n) => (n > 0 ? `<small>desde</small> ${clp(n)}` : '<small>precio</small> A consultar');
-const $ = (s) => document.querySelector(s);
-const $$ = (s) => [...document.querySelectorAll(s)];
+const $ = (s, c = document) => c.querySelector(s);
+const $$ = (s, c = document) => [...c.querySelectorAll(s)];
 const esc = (s) => String(s ?? '').replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
-const findProduct = (id) => (id === CUSTOM.id ? CUSTOM : PRODUCTS.find((p) => p.id === id));
-// Se usa api.whatsapp.com y no wa.me: la redirección de wa.me rompe los emojis (llegan como �)
-const waUrl = (text) =>
-  `https://api.whatsapp.com/send?phone=${WHATSAPP_NUMBER}${text ? '&text=' + encodeURIComponent(text) : ''}`;
-const toMin = (hhmm) => { const [h, m] = String(hhmm || '0:0').split(':').map(Number); return (h || 0) * 60 + (m || 0); };
+const clp = (n) => '$' + Number(n).toLocaleString('es-CL');
+const DIAS = ['domingo', 'lunes', 'martes', 'miércoles', 'jueves', 'viernes', 'sábado'];
+const REDUCIR = matchMedia('(prefers-reduced-motion: reduce)').matches;
+// api.whatsapp.com y no wa.me: la redirección de wa.me rompe los emojis del mensaje
+const waUrl = (text) => `https://api.whatsapp.com/send?phone=${DATA.whatsapp}&text=${encodeURIComponent(text)}`;
+const toMin = (t) => { const [h, m] = String(t).split(':').map(Number); return h * 60 + (m || 0); };
 const fmtMin = (m) => `${String(Math.floor(m / 60)).padStart(2, '0')}:${String(m % 60).padStart(2, '0')}`;
+const duracionTxt = (m) => (!m ? '' : m < 60 ? `${m} min` : m % 60 ? `${Math.floor(m / 60)} h ${m % 60} min` : `${m / 60} h`);
+const horarioDe = (day) => (DATA.horario || {})[day] || null; // [abre, cierra] o null (cerrado)
 
-// Fecha y hora actuales en Chile (aunque el visitante esté en otro huso)
+// Fecha y hora actuales en Chile, aunque el visitante esté en otro huso horario
 function chileNow() {
-  const parts = Object.fromEntries(new Intl.DateTimeFormat('en-CA', {
-    timeZone: 'America/Santiago', year: 'numeric', month: '2-digit', day: '2-digit',
-    hour: '2-digit', minute: '2-digit', hourCycle: 'h23', weekday: 'short',
-  }).formatToParts(new Date()).map((p) => [p.type, p.value]));
-  const day = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].indexOf(parts.weekday);
-  return { iso: `${parts.year}-${parts.month}-${parts.day}`, day, min: Number(parts.hour) * 60 + Number(parts.minute) };
+  const p = Object.fromEntries(new Intl.DateTimeFormat('en-CA', {
+    timeZone: 'America/Santiago', year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', hourCycle: 'h23', weekday: 'short',
+  }).formatToParts(new Date()).map((x) => [x.type, x.value]));
+  return { iso: `${p.year}-${p.month}-${p.day}`, day: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].indexOf(p.weekday), min: Number(p.hour) * 60 + Number(p.minute) };
 }
 const dayOfIso = (iso) => new Date(iso + 'T12:00:00').getDay();
+const addDays = (iso, n) => { const d = new Date(iso + 'T12:00:00'); d.setDate(d.getDate() + n); return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`; };
 
-function nextOrderNumber() {
-  let n = 141;
-  try { n = parseInt(localStorage.getItem('orderCounter') || '141', 10) || 141; } catch (e) {}
-  return String(n + 1).padStart(4, '0');
+// ===== Cabecera y menú =====
+const siteHead = $('#siteHead');
+const onScroll = () => siteHead && siteHead.classList.toggle('is-scrolled', scrollY > 24);
+addEventListener('scroll', onScroll, { passive: true });
+onScroll();
+
+const burger = $('#burger');
+function setMenu(open) {
+  document.body.classList.toggle('menu-open', open);
+  document.body.style.overflow = open ? 'hidden' : '';
+  burger?.setAttribute('aria-expanded', String(open));
+  burger?.setAttribute('aria-label', open ? 'Cerrar menú' : 'Abrir menú');
 }
-function commitOrderNumber(num) {
-  try { localStorage.setItem('orderCounter', String(parseInt(num, 10))); } catch (e) {}
+burger?.addEventListener('click', () => setMenu(!document.body.classList.contains('menu-open')));
+$('#nav')?.addEventListener('click', (e) => { if (e.target.closest('a')) setMenu(false); });
+
+// ===== Estado: abierto / cerrado (hora de Chile) =====
+(function estado() {
+  const now = chileNow();
+  const h = horarioDe(now.day);
+  const open = !!h && now.min >= toMin(h[0]) && now.min < toMin(h[1]);
+  let next = '';
+  if (!open) {
+    for (let i = 0; i < 8; i++) {
+      const d = (now.day + i) % 7, hh = horarioDe(d);
+      if (hh && (i > 0 || now.min < toMin(hh[0]))) { next = `${i === 0 ? 'hoy' : i === 1 ? 'mañana' : 'el ' + DIAS[d]} a las ${hh[0]}`; break; }
+    }
+  }
+  const set = (sel, txt) => $$(sel).forEach((el) => { el.textContent = txt; });
+  $$('[data-status]').forEach((el) => { el.textContent = open ? 'Abierto ahora' : 'Cerrado ahora'; el.classList.add(open ? 'is-open' : 'is-closed'); });
+  $$(`[data-hours] [data-day="${now.day}"]`).forEach((li) => li.classList.add('is-today'));
+  set('[data-status-line]', open ? `Abierto hoy hasta las ${h[1]}` : next ? `Cerrado · abrimos ${next}` : 'Cerrado');
+  set('[data-status-word]', open ? 'Abierto' : 'Cerrado');
+  $$('[data-status-word]').forEach((el) => el.classList.toggle('is-open', open));
+  set('[data-status-sub]', open ? `Hoy hasta las ${h[1]} hrs` : next ? `Abrimos ${next}` : '');
+  set('[data-status-today]', open ? `Abierto hasta las ${h[1]}` : 'Cerrado ahora');
+  set('[data-status-next]', open ? `Hoy de ${h[0]} a ${h[1]} hrs` : next ? `Abrimos ${next}` : '');
+})();
+
+// ===== Portada: fotos que se van turnando =====
+(function heroSlider() {
+  const hero = $('.hero');
+  const slides = $$('.hero__slide');
+  if (!hero || slides.length < 2) return;
+  const dots = $$('.hero__dot');
+  const num = $('#heroNum');
+  let i = 0, timer = null;
+  function go(n) {
+    i = (n + slides.length) % slides.length;
+    slides.forEach((s, k) => s.classList.toggle('is-active', k === i));
+    dots.forEach((d, k) => {
+      d.classList.remove('is-active');
+      if (k === i) { void d.offsetWidth; d.classList.add('is-active'); } // reinicia la barra de progreso
+    });
+    if (num) num.textContent = String(i + 1).padStart(2, '0');
+    // precarga la siguiente
+    const nextImg = slides[(i + 1) % slides.length].querySelector('img');
+    if (nextImg && nextImg.loading === 'lazy') nextImg.loading = 'eager';
+  }
+  const start = () => { if (!REDUCIR) { clearInterval(timer); timer = setInterval(() => go(i + 1), 6000); } };
+  const stop = () => clearInterval(timer);
+  dots.forEach((d) => d.addEventListener('click', () => { go(Number(d.dataset.go)); start(); }));
+  hero.addEventListener('mouseenter', () => { stop(); hero.classList.add('is-paused'); });
+  hero.addEventListener('mouseleave', () => { go(i); start(); hero.classList.remove('is-paused'); });
+  document.addEventListener('visibilitychange', () => (document.hidden ? stop() : start()));
+  go(0); start();
+})();
+
+// ===== Carta de precios: pestañas =====
+const menus = $('#menus');
+function setTab(cat) {
+  if (!menus) return;
+  $$('.tab').forEach((t) => { const on = t.dataset.cat === cat; t.classList.toggle('is-active', on); t.setAttribute('aria-selected', String(on)); });
+  $$('.menu', menus).forEach((m) => { m.hidden = cat !== 'todos' && m.dataset.group !== cat; });
+  menus.classList.toggle('is-single', cat !== 'todos');
+}
+$('.tabs')?.addEventListener('click', (e) => { const t = e.target.closest('.tab'); if (t) setTab(t.dataset.cat); });
+document.addEventListener('click', (e) => { const a = e.target.closest('[data-tab]'); if (a && menus) setTab(a.dataset.tab); });
+
+// ===== Ventana de reserva =====
+const modal = $('#modal');
+const fServicio = $('#fServicio'), fFecha = $('#fFecha'), fHora = $('#fHora'), fBarbero = $('#fBarbero'), fNombre = $('#fNombre');
+const SERV = DATA.servicios || [];
+const EQUIPO = DATA.equipo || [];
+const findServ = (id) => SERV.find((s) => s.id === id);
+
+if (fServicio) {
+  const cats = DATA.categorias || [];
+  fServicio.innerHTML = '<option value="">Aún no lo sé, quiero asesoría</option>' + cats.map((c) => `
+    <optgroup label="${esc(c.n)}">${SERV.filter((s) => s.c === c.id).map((s) => `<option value="${esc(s.id)}">${esc(s.n)}${s.p ? ` · ${clp(s.p)}` : ''}</option>`).join('')}</optgroup>`).join('');
 }
 
-// ===== CATÁLOGO DE SERVICIOS =====
-const grid = $('#productGrid');
-const filters = $('#filters');
-let currentCat = 'todos';
-
-function renderFilters(active) {
-  const count = (k) => (k === 'todos' ? PRODUCTS.length : PRODUCTS.filter((p) => p.tags.includes(k)).length);
-  filters.innerHTML = FILTERS
-    .filter(([k]) => count(k) > 0)
-    .map(([k, label]) => `<button class="tab ${k === active ? 'is-active' : ''}" role="tab" aria-selected="${k === active}" data-cat="${esc(k)}">${esc(label)}<span class="tab__n">${count(k)}</span></button>`)
-    .join('');
+function renderBarberos() {
+  const s = findServ(fServicio.value);
+  const prev = fBarbero.value;
+  const lista = s && s.b.length ? EQUIPO.filter((e) => s.b.includes(e.id)) : EQUIPO;
+  fBarbero.innerHTML = '<option value="">El primero disponible</option>' + lista.map((e) => `<option value="${esc(e.id)}"${e.id === prev ? ' selected' : ''}>${esc(e.n)}</option>`).join('');
 }
-
-function renderProducts(cat = currentCat) {
-  currentCat = cat;
-  let list = cat === 'todos' ? PRODUCTS : PRODUCTS.filter((p) => p.tags.includes(cat));
-  const sort = SORTS[$('#sort').value];
-  if (sort) list = [...list].sort(sort);
-  $('#count').innerHTML = `Mostrando <strong>${list.length}</strong> ${list.length === 1 ? 'servicio' : 'servicios'}`;
-  // misma tarjeta que card() en scripts/build.mjs
-  grid.innerHTML = list.map((p, i) => `
-    <article class="card${p.agotado ? ' is-soldout' : ''}" style="animation-delay:${Math.min(i, 8) * 45}ms">
-      <div class="card__img">
-        ${p.agotado ? '<span class="badge badge--soldout">No disponible</span>' : p.badge ? `<span class="badge">${esc(p.badge)}</span>` : ''}
-        <img src="${esc(p.img)}" alt="${esc(p.name)} en ${esc(TIENDA.nombre)}, ${esc(TIENDA.ciudad)}" loading="lazy">
-      </div>
-      <div class="card__body">
-        <h3>${esc(p.name)}</h3>
-        ${p.desc ? `<p class="card__desc">${esc(p.desc)}</p>` : ''}
-        ${p.items.length ? `<ul>${p.items.map((i) => `<li>${esc(i)}</li>`).join('')}</ul>` : ''}
-        <div class="card__foot">
-          <span class="price">${precioHtml(p.price)}</span>
-          ${p.agotado
-            ? `<a class="btn btn--ghost btn--sm" target="_blank" rel="noopener" href="${esc(waUrl(`Hola! ¿Están haciendo ${p.name}? 💈`))}">Consultar</a>`
-            : `<button class="btn btn--primary btn--sm" data-order="${esc(p.id)}">Agendar</button>`}
-        </div>
-      </div>
-    </article>`).join('');
+function renderInfo() {
+  const s = findServ(fServicio.value);
+  const box = $('#svcInfo');
+  if (!s) { box.hidden = true; return; }
+  const con = s.b.length ? `Con ${EQUIPO.filter((e) => s.b.includes(e.id)).map((e) => e.n).join(', ').replace(/, ([^,]*)$/, ' y $1')}` : 'Con cualquier barbero';
+  box.innerHTML = `<span><b>${s.p ? clp(s.p) : 'A consultar'}</b></span><span>${duracionTxt(s.d)}</span><span>${esc(con)}</span>`;
+  box.hidden = false;
 }
-
-filters.addEventListener('click', (e) => {
-  const btn = e.target.closest('[data-cat]');
-  if (!btn) return;
-  renderFilters(btn.dataset.cat);
-  renderProducts(btn.dataset.cat);
-});
-$('#sort').addEventListener('change', () => renderProducts());
-
-// ===== FORMULARIO DE RESERVA =====
-const modal = $('#orderModal');
-const form = $('#orderForm');
-const fServicio = $('#fServicio');
-const fFecha = $('#fFecha');
-const fHora = $('#fHora');
-let orderNumber = nextOrderNumber();
-
-function renderServiceOptions() {
-  fServicio.innerHTML =
-    PRODUCTS.filter((p) => !p.agotado)
-      .map((p) => `<option value="${esc(p.id)}">${esc(p.name)} (${p.price ? 'desde ' + clp(p.price) : 'a consultar'})</option>`).join('') +
-    `<option value="${CUSTOM.id}">${CUSTOM.name}</option>`;
-}
-
-$('#fExtras').innerHTML = EXTRAS
-  .map((x) => `<label><input type="checkbox" value="${esc(x)}"><span>+ ${esc(x)}</span></label>`)
-  .join('');
-
-// Con una sola sucursal no se pregunta dónde: se oculta el campo
-const SUCURSALES = (TIENDA.sucursales || []).length > 1 ? [...TIENDA.sucursales, 'La que tenga hora antes'] : [...(TIENDA.sucursales || [])];
-if (SUCURSALES.length <= 1) $('#fSucursal').closest('fieldset').hidden = true;
-$('#fSucursal').innerHTML = SUCURSALES
-  .map((s, i) => `<label class="radio"><input type="radio" name="sucursal" value="${i}"${i === 0 ? ' checked' : ''}><span>${esc(s.replace(/\s*\(.*\)$/, ''))}</span></label>`)
-  .join('');
-
-// Horas disponibles para el día elegido (según el horario de ese día; si es hoy, solo las que faltan)
-function renderHours() {
+// Horas del día elegido según el horario de ese día (si es hoy, solo las que faltan)
+function renderHoras() {
   const prev = fHora.value;
   const now = chileNow();
   if (!fFecha.value) { fHora.innerHTML = '<option value="">Elige un día</option>'; return; }
-  const h = HORARIO(dayOfIso(fFecha.value));
+  const h = horarioDe(dayOfIso(fFecha.value));
   if (!h) { fHora.innerHTML = '<option value="">Cerrado ese día</option>'; return; }
+  const s = findServ(fServicio.value);
+  const dur = Math.max(30, (s && s.d) || 30);
   const [abre, cierra] = h.map(toMin);
-  const desde = fFecha.value === now.iso ? Math.max(abre, Math.ceil((now.min + 30) / SLOT_MIN) * SLOT_MIN) : abre;
+  const desde = fFecha.value === now.iso ? Math.max(abre, Math.ceil((now.min + 30) / 30) * 30) : abre;
   const slots = [];
-  for (let m = desde; m <= cierra - SLOT_MIN; m += SLOT_MIN) slots.push(fmtMin(m));
+  for (let m = desde; m <= cierra - dur; m += 30) slots.push(fmtMin(m));
   fHora.innerHTML = slots.length
-    ? '<option value="">Elige una hora</option>' + slots.map((s) => `<option${s === prev ? ' selected' : ''}>${s}</option>`).join('')
-    : '<option value="">No quedan horas hoy</option>';
+    ? '<option value="">Elige una hora</option>' + slots.map((t) => `<option${t === prev ? ' selected' : ''}>${t}</option>`).join('')
+    : '<option value="">No quedan horas ese día</option>';
 }
-
-function getOrder() {
-  const suc = form.querySelector('input[name="sucursal"]:checked');
-  return {
-    product: findProduct(fServicio.value) || CUSTOM,
-    extras: $$('#fExtras input:checked').map((i) => i.value),
-    sucursal: suc ? SUCURSALES[Number(suc.value)] : '',
-    fecha: fFecha.value,
-    hora: fHora.value,
-    nombre: $('#fNombre').value.trim(),
-    barbero: $('#fBarbero').value.trim(),
-    comentario: $('#fComentario').value.trim(),
-  };
-}
-
-// *texto* = negrita y _texto_ = cursiva en WhatsApp
-function buildMessage(o) {
-  const custom = o.product.id === CUSTOM.id;
-  const L = [`💈 *RESERVA #${orderNumber}* 💈`, '━━━━━━━━━━━━━━━'];
-  L.push(`✂️ *Servicio:* ${o.product.name}${custom || !o.product.price ? '' : ` (desde ${clp(o.product.price)})`}`);
-  if (o.extras.length) L.push(`➕ *Agregar:* ${o.extras.join(', ')}`);
-  if (o.sucursal) L.push(`📍 *Sucursal:* ${o.sucursal}`);
-  if (o.fecha) L.push(`📅 *Día:* ${DIAS[dayOfIso(o.fecha)]} ${o.fecha.split('-').reverse().join('/')}`);
-  if (o.hora) L.push(`🕒 *Hora:* ${o.hora} hrs`);
-  if (o.barbero) L.push(`💇‍♂️ *Barbero:* ${o.barbero}`);
-  if (o.nombre) L.push(`🙋‍♂️ *Nombre:* ${o.nombre}`);
-  if (o.comentario) L.push(`📝 *Comentario:* _${o.comentario}_`);
-  L.push('━━━━━━━━━━━━━━━');
-  L.push('');
-  L.push(`¡Hola ${TIENDA.nombre}! Quiero agendar esta hora 🙌`);
-  return L.join('\n');
-}
-
-function formatPreview(text) {
-  return esc(text)
-    .replace(/\*([^*\n]+)\*/g, '<strong>$1</strong>')
-    .replace(/(^|\s)_([^_\n]+)_/g, '$1<em>$2</em>');
-}
-
-function update() {
-  const o = getOrder();
-  $('#msgPreview').innerHTML = formatPreview(buildMessage(o));
-  $('#fTotal').textContent = o.product.price ? 'Desde ' + clp(o.product.price) : 'A consultar';
-}
-
-function openModal(productId, sucursal) {
-  if (productId && findProduct(productId)) fServicio.value = productId;
-  if (sucursal !== undefined) {
-    const r = form.querySelector(`input[name="sucursal"][value="${sucursal}"]`);
-    if (r) r.checked = true;
-  }
+function openModal(servId, barberoId) {
+  if (!modal) return false;
+  fServicio.value = servId && findServ(servId) ? servId : '';
+  renderBarberos(); renderInfo();
+  if (barberoId && [...fBarbero.options].some((o) => o.value === barberoId)) fBarbero.value = barberoId;
   const now = chileNow();
   fFecha.min = now.iso;
   if (!fFecha.value || fFecha.value < now.iso) fFecha.value = now.iso;
-  renderHours();
-  // Si hoy ya no quedan horas (o está cerrado), propone el siguiente día con horas libres
-  for (let i = 1; i <= 7 && fHora.options.length < 2; i++) {
-    const d = new Date(now.iso + 'T12:00:00');
-    d.setDate(d.getDate() + i);
-    fFecha.value = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
-    renderHours();
-  }
-  $('#formError').hidden = true;
-  update();
+  renderHoras();
+  // Si hoy ya no quedan horas, propone el siguiente día con atención
+  for (let i = 1; i <= 7 && fHora.options.length < 2; i++) { fFecha.value = addDays(now.iso, i); renderHoras(); }
+  $('#waError').hidden = true;
   modal.classList.add('is-open');
   modal.setAttribute('aria-hidden', 'false');
   document.body.style.overflow = 'hidden';
-  setTimeout(() => fServicio.focus(), 50);
+  setTimeout(() => fServicio.focus({ preventScroll: true }), 60);
+  return true;
 }
 function closeModal() {
+  if (!modal?.classList.contains('is-open')) return;
   modal.classList.remove('is-open');
   modal.setAttribute('aria-hidden', 'true');
-  document.body.style.overflow = '';
+  document.body.style.overflow = document.body.classList.contains('menu-open') ? 'hidden' : '';
 }
-
 document.addEventListener('click', (e) => {
-  const orderBtn = e.target.closest('[data-order]');
-  if (orderBtn) { e.stopPropagation(); openModal(orderBtn.dataset.order, orderBtn.dataset.sucursal); return; }
+  const btn = e.target.closest('[data-reservar]');
+  if (btn) { if (openModal(btn.dataset.reservar, btn.dataset.barbero)) { e.preventDefault(); setMenu(false); } return; }
   if (e.target.closest('[data-close]')) closeModal();
 });
-document.addEventListener('keydown', (e) => { if (e.key === 'Escape') { closeModal(); closeLightbox(); } });
-form.addEventListener('input', update);
-form.addEventListener('change', (e) => {
-  if (e.target === fFecha) renderHours();
-  update();
-});
+fServicio?.addEventListener('change', () => { renderBarberos(); renderInfo(); renderHoras(); });
+fFecha?.addEventListener('change', renderHoras);
 
-form.addEventListener('submit', (e) => {
+$('#waForm')?.addEventListener('submit', (e) => {
   e.preventDefault();
-  const o = getOrder();
-  const missing = [];
-  if (!o.fecha) missing.push('el día');
-  if (!o.hora) missing.push('la hora');
-  if (!o.nombre) missing.push('tu nombre');
-  if (missing.length) {
-    const err = $('#formError');
-    err.textContent = 'Falta completar: ' + missing.join(', ') + '.';
-    err.hidden = false;
-    return;
-  }
-  window.open(waUrl(buildMessage(o)), '_blank', 'noopener');
-  commitOrderNumber(orderNumber);
-  orderNumber = nextOrderNumber();
-  form.reset();
+  const falta = [];
+  if (!fFecha.value) falta.push('el día');
+  if (!fHora.value) falta.push('la hora');
+  if (!fNombre.value.trim()) falta.push('tu nombre');
+  const err = $('#waError');
+  if (falta.length) { err.textContent = `Falta completar ${falta.join(', ').replace(/, ([^,]*)$/, ' y $1')}.`; err.hidden = false; return; }
+  err.hidden = true;
+  const s = findServ(fServicio.value);
+  const b = EQUIPO.find((x) => x.id === fBarbero.value);
+  const L = [`¡Hola ${DATA.nombre}! 💈 Quiero pedir una hora:`, ''];
+  L.push(`✂️ *Servicio:* ${s ? `${s.n}${s.p ? ` (${clp(s.p)} · ${duracionTxt(s.d)})` : ''}` : 'Aún no lo sé, quiero asesoría'}`);
+  L.push(`📅 *Día:* ${DIAS[dayOfIso(fFecha.value)]} ${fFecha.value.split('-').reverse().slice(0, 2).join('/')}`);
+  L.push(`🕒 *Hora:* ${fHora.value} aprox.`);
+  L.push(`💈 *Barbero:* ${b ? b.n : 'El primero disponible'}`);
+  L.push(`🙋‍♂️ *Nombre:* ${fNombre.value.trim()}`);
+  L.push('', '¿Me confirman si hay disponibilidad? 🙌');
+  window.open(waUrl(L.join('\n')), '_blank', 'noopener');
   closeModal();
 });
 
-// Barberos del local (se editan en /admin → Ajustes)
-const fBarbero = $('#fBarbero');
-fBarbero.innerHTML = '<option value="">El que esté disponible</option>' +
-  (TIENDA.barberos || []).map((b) => `<option>${esc(b)}</option>`).join('');
+// ===== Formulario de contacto (abre WhatsApp con el mensaje) =====
+const cForm = $('#contactForm');
+if (cForm) {
+  const cNombre = $('#cNombre'), cMotivo = $('#cMotivo'), cMensaje = $('#cMensaje'), cMail = $('#cMail');
+  const mailBase = cMail?.getAttribute('href');
+  const syncMail = () => {
+    if (!cMail) return;
+    const body = `${cMensaje.value.trim()}\n\n${cNombre.value.trim()}`.trim();
+    cMail.href = `${mailBase}?subject=${encodeURIComponent(`${cMotivo.value} · ${DATA.nombre}`)}${body ? `&body=${encodeURIComponent(body)}` : ''}`;
+  };
+  cForm.addEventListener('input', syncMail);
+  cForm.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const err = $('#cError');
+    const falta = [];
+    if (!cNombre.value.trim()) falta.push('tu nombre');
+    if (!cMensaje.value.trim()) falta.push('el mensaje');
+    if (falta.length) { err.textContent = `Falta completar ${falta.join(' y ')}.`; err.hidden = false; return; }
+    err.hidden = true;
+    const txt = [`¡Hola ${DATA.nombre}! 👋`, '', `🙋‍♂️ *Nombre:* ${cNombre.value.trim()}`, `📌 *Motivo:* ${cMotivo.value}`, `💬 *Mensaje:* ${cMensaje.value.trim()}`].join('\n');
+    window.open(waUrl(txt), '_blank', 'noopener');
+  });
+}
 
-// Links directos a WhatsApp
-['#footerWa', '#ctaWa', '#waFloat'].forEach((s) => { const el = $(s); if (el) el.href = waUrl(`Hola ${TIENDA.nombre}! 💈 Quiero hacer una consulta`); });
-$('#year').textContent = new Date().getFullYear();
+// ===== Galería: visor de fotos =====
+const lb = $('#lightbox');
+const FOTOS = DATA.galeria || [];
+let lbIndex = 0;
+function showFoto(n) {
+  lbIndex = (n + FOTOS.length) % FOTOS.length;
+  const f = FOTOS[lbIndex];
+  $('#lbImg').src = f.foto;
+  $('#lbImg').alt = f.texto || `Corte hecho en ${DATA.nombre}`;
+  $('#lbCap').textContent = f.texto ? `${f.texto} · ${lbIndex + 1}/${FOTOS.length}` : `${lbIndex + 1}/${FOTOS.length}`;
+}
+function closeLightbox() { if (!lb?.classList.contains('is-open')) return; lb.classList.remove('is-open'); lb.setAttribute('aria-hidden', 'true'); document.body.style.overflow = ''; }
+$('#gallery')?.addEventListener('click', (e) => {
+  const shot = e.target.closest('[data-shot]');
+  if (!shot || !FOTOS.length) return;
+  showFoto(Number(shot.dataset.shot));
+  lb.classList.add('is-open'); lb.setAttribute('aria-hidden', 'false'); document.body.style.overflow = 'hidden';
+  $('.lightbox__close', lb).focus();
+});
+lb?.addEventListener('click', (e) => {
+  const b = e.target.closest('[data-lb]');
+  if (b) { if (b.dataset.lb === 'close') closeLightbox(); else showFoto(lbIndex + (b.dataset.lb === 'next' ? 1 : -1)); return; }
+  if (e.target === lb) closeLightbox();
+});
+let touchX = null;
+lb?.addEventListener('touchstart', (e) => { touchX = e.touches[0].clientX; }, { passive: true });
+lb?.addEventListener('touchend', (e) => {
+  if (touchX === null) return;
+  const dx = e.changedTouches[0].clientX - touchX; touchX = null;
+  if (Math.abs(dx) > 50) showFoto(lbIndex + (dx < 0 ? 1 : -1));
+});
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape') { closeModal(); closeLightbox(); setMenu(false); }
+  if (lb?.classList.contains('is-open') && (e.key === 'ArrowRight' || e.key === 'ArrowLeft')) showFoto(lbIndex + (e.key === 'ArrowRight' ? 1 : -1));
+});
 
-// ===== ABIERTO / CERRADO (hora de Chile) =====
-(function openStatus() {
-  const now = chileNow();
-  const h = HORARIO(now.day);
-  const open = !!h && now.min >= toMin(h[0]) && now.min < toMin(h[1]);
-  const el = $('#openStatus');
-  el.textContent = open ? 'Abierto ahora' : 'Cerrado ahora';
-  el.className = 'status ' + (open ? 'is-open' : 'is-closed');
-  const today = document.querySelector(`#hoursList [data-day="${now.day}"]`);
-  if (today) today.classList.add('is-today');
-
-  // Próxima apertura para el texto del hero
-  let next = '';
-  if (!open) {
-    for (let i = 0; i < 7; i++) {
-      const d = (now.day + i) % 7, hh = HORARIO(d);
-      if (hh && (i > 0 || now.min < toMin(hh[0]))) { next = `${i === 0 ? 'hoy' : i === 1 ? 'mañana' : DIAS[d]} a las ${hh[0]}`; break; }
-    }
-  }
-  $('#heroStatus').textContent = open ? 'Abierto ahora' : 'Cerrado ahora';
-  $('#heroStatus').style.color = open ? '#4ADE80' : '';
-  $('#heroStatusSub').textContent = open ? `Hoy hasta las ${h[1]} hrs` : next ? `Abrimos ${next}` : '';
+// ===== Reseñas: carrusel =====
+(function reviews() {
+  const track = $('#reviews');
+  if (!track) return;
+  const paso = () => { const c = track.querySelector('.review'); return c ? c.getBoundingClientRect().width + 22 : track.clientWidth; };
+  const mover = (dir) => {
+    const fin = track.scrollLeft + track.clientWidth >= track.scrollWidth - 8;
+    if (dir > 0 && fin) track.scrollTo({ left: 0 }); else track.scrollBy({ left: dir * paso() });
+  };
+  $$('[data-rev]').forEach((b) => b.addEventListener('click', () => mover(b.dataset.rev === 'next' ? 1 : -1)));
+  if (REDUCIR) return;
+  let timer = setInterval(() => mover(1), 7000);
+  const pausa = () => clearInterval(timer);
+  const sigue = () => { clearInterval(timer); timer = setInterval(() => mover(1), 7000); };
+  track.addEventListener('mouseenter', pausa); track.addEventListener('mouseleave', sigue);
+  track.addEventListener('focusin', pausa); track.addEventListener('focusout', sigue);
+  track.addEventListener('touchstart', pausa, { passive: true });
 })();
 
-// ===== MAPA POR SUCURSAL =====
-$$('.branch').forEach((b) => b.addEventListener('click', (e) => {
-  if (e.target.closest('a, button')) return;
-  $$('.branch').forEach((x) => x.classList.toggle('is-active', x === b));
-  $('#mapFrame').src = `https://maps.google.com/maps?q=${b.dataset.map}&z=16&output=embed`;
-}));
+// ===== Video: se reproduce solo cuando está a la vista =====
+(function video() {
+  const v = $('#reelVideo'), btn = $('#reelToggle');
+  if (!v) return;
+  let pausadoPorUsuario = REDUCIR;
+  const icono = () => {
+    const playing = !v.paused;
+    btn.innerHTML = `<svg class="ic ic--fill" aria-hidden="true"><use href="#i-${playing ? 'pausa' : 'play'}"/></svg>`;
+    btn.setAttribute('aria-label', playing ? 'Pausar video' : 'Reproducir video');
+  };
+  v.addEventListener('play', icono); v.addEventListener('pause', icono);
+  btn.addEventListener('click', () => { if (v.paused) { pausadoPorUsuario = false; v.play(); } else { pausadoPorUsuario = true; v.pause(); } });
+  icono();
+  if (!('IntersectionObserver' in window)) return;
+  new IntersectionObserver((entries) => entries.forEach((en) => {
+    if (en.isIntersecting && !pausadoPorUsuario) { v.preload = 'auto'; v.play().catch(() => {}); } else if (!en.isIntersecting) v.pause();
+  }), { threshold: .35 }).observe(v);
+})();
 
-// ===== GALERÍA =====
-const lb = $('#lightbox');
-function closeLightbox() { lb.classList.remove('is-open'); lb.setAttribute('aria-hidden', 'true'); }
-$('#gallery')?.addEventListener('click', (e) => {
-  const shot = e.target.closest('.shot');
-  if (!shot) return;
-  const img = shot.querySelector('img');
-  $('#lbImg').src = img.src;
-  $('#lbImg').alt = img.alt;
-  $('#lbCap').textContent = shot.dataset.caption || '';
-  lb.classList.add('is-open');
-  lb.setAttribute('aria-hidden', 'false');
-});
-lb.addEventListener('click', (e) => { if (e.target === lb || e.target.closest('[data-lb-close]')) closeLightbox(); });
+// ===== Mapas: se cargan al acercarse (la página abre más rápido) =====
+(function mapas() {
+  const frames = $$('iframe[data-src]');
+  const cargar = (f) => { f.src = f.dataset.src; f.removeAttribute('data-src'); };
+  if (!('IntersectionObserver' in window)) { frames.forEach(cargar); return; }
+  const io = new IntersectionObserver((entries) => entries.forEach((en) => { if (en.isIntersecting) { cargar(en.target); io.unobserve(en.target); } }), { rootMargin: '400px' });
+  frames.forEach((f) => io.observe(f));
+})();
 
-// ===== MENÚ MÓVIL =====
-const navLinks = $('#navLinks');
-const navToggle = $('#navToggle');
-navToggle.addEventListener('click', () => {
-  const open = navLinks.classList.toggle('is-open');
-  navToggle.setAttribute('aria-expanded', String(open));
-});
-navLinks.addEventListener('click', (e) => {
-  if (e.target.closest('a')) { navLinks.classList.remove('is-open'); navToggle.setAttribute('aria-expanded', 'false'); }
-});
-
-// ===== ANIMACIONES AL HACER SCROLL =====
+// ===== Animaciones al hacer scroll y sección actual en el menú =====
 if ('IntersectionObserver' in window) {
   const io = new IntersectionObserver((entries) => entries.forEach((en) => {
     if (en.isIntersecting) { en.target.classList.add('is-in'); io.unobserve(en.target); }
-  }), { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
-  $$('[data-reveal]').forEach((el, i) => { el.style.transitionDelay = `${(i % 4) * 70}ms`; io.observe(el); });
-
-  // Resalta la sección actual en el menú
-  const links = $$('.nav__links a');
-  const spy = new IntersectionObserver((entries) => entries.forEach((en) => {
-    if (en.isIntersecting) links.forEach((a) => a.classList.toggle('is-current', a.getAttribute('href') === '#' + en.target.id));
-  }), { rootMargin: '-45% 0px -50% 0px' });
-  links.forEach((a) => { const s = document.querySelector(a.getAttribute('href')); if (s) spy.observe(s); });
+  }), { threshold: .12, rootMargin: '0px 0px -40px 0px' });
+  $$('[data-reveal]').forEach((el) => {
+    const hermanos = [...el.parentElement.children].filter((c) => c.hasAttribute('data-reveal'));
+    el.style.transitionDelay = `${Math.min(hermanos.indexOf(el), 5) * 80}ms`;
+    io.observe(el);
+  });
+  if (document.body.dataset.page === 'inicio') {
+    const links = $$('.nav > a[data-nav]');
+    const spy = new IntersectionObserver((entries) => entries.forEach((en) => {
+      if (en.isIntersecting) links.forEach((a) => a.classList.toggle('is-current', a.dataset.nav === en.target.id));
+    }), { rootMargin: '-45% 0px -50% 0px' });
+    ['nosotros', 'precios', 'equipo', 'galeria', 'resenas'].forEach((id) => { const s = document.getElementById(id); if (s) spy.observe(s); });
+  }
 } else {
   $$('[data-reveal]').forEach((el) => el.classList.add('is-in'));
 }
-
-// ===== CARGA DEL CATÁLOGO =====
-async function loadProducts() {
-  try {
-    const res = await fetch('data/catalogo.json', { cache: 'no-cache' });
-    if (!res.ok) throw new Error(`HTTP ${res.status}`);
-    const data = await res.json();
-    const categorias = Array.isArray(data.categorias) ? data.categorias : [];
-
-    const tagsOf = {};
-    categorias.forEach((c) => (c.productos || []).forEach((id) => (tagsOf[id] = tagsOf[id] || []).push(c.id)));
-
-    FILTERS = [['todos', 'Todos'], ...categorias.map((c) => [c.id, c.nombre])];
-    PRODUCTS = (data.productos || []).map((p) => ({
-      id: p.id,
-      name: p.nombre,
-      price: Number(p.precio) || 0,
-      img: (p.foto || 'img/logo.jpg').replace(/^\//, ''),
-      desc: p.descripcion || '',
-      items: Array.isArray(p.incluye) ? p.incluye : [],
-      tags: tagsOf[p.id] || [],
-      badge: p.etiqueta || '',
-      agotado: !!p.agotado,
-    }));
-  } catch (e) {
-    console.error(e);
-    grid.innerHTML = '<p class="muted">No se pudo cargar la lista de servicios. Intenta recargar la página.</p>';
-  }
-  renderFilters('todos');
-  renderProducts('todos');
-  renderServiceOptions();
-}
-
-loadProducts();

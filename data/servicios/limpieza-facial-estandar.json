@@ -1,0 +1,16 @@
+{
+  "descripcion": "",
+  "incluye": [],
+  "nota": "",
+  "etiqueta": "",
+  "barberos": [
+    "criss",
+    "daylan"
+  ],
+  "visible": true,
+  "nombre": "Limpieza facial estándar",
+  "categoria": "cejas-y-rostro",
+  "precio": 18000,
+  "duracion": 40,
+  "orden": 40
+}

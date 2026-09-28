@@ -1,0 +1,17 @@
+{
+  "descripcion": "",
+  "incluye": [],
+  "nota": "",
+  "etiqueta": "",
+  "barberos": [
+    "criss",
+    "daylan",
+    "alejandro"
+  ],
+  "visible": true,
+  "nombre": "Depilación de cejas con cera",
+  "categoria": "cejas-y-rostro",
+  "precio": 8000,
+  "duracion": 20,
+  "orden": 20
+}

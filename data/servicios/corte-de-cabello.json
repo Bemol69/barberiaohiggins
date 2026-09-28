@@ -1,0 +1,13 @@
+{
+  "descripcion": "Clásico o moderno, a tu medida.",
+  "incluye": [],
+  "nota": "",
+  "etiqueta": "Más pedido",
+  "barberos": [],
+  "visible": true,
+  "nombre": "Corte de cabello",
+  "categoria": "cortes",
+  "precio": 13000,
+  "duracion": 45,
+  "orden": 10
+}

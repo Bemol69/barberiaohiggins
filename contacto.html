@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="es-CL">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- SEO:HEAD -->
+  <meta name="theme-color" content="%%COLOR_FONDO%%">
+  <link rel="icon" href="/img/favicon.png" type="image/png">
+  <link rel="apple-touch-icon" href="/img/apple-touch-icon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="%%FUENTES_URL%%" rel="stylesheet">
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body data-page="contacto" id="top">
+<!-- #include icons.html -->
+<!-- #include header.html -->
+
+  <main id="main">
+    <!-- CABECERA DE PÁGINA -->
+    <section class="page-hero">
+      <img class="page-hero__bg" src="/img/fotos/local-fachada-ancha.webp" alt="" width="1600" height="900" fetchpriority="high">
+      <div class="container page-hero__inner">
+        <nav class="crumbs" aria-label="Ruta"><a href="/">Inicio</a> <span aria-hidden="true">/</span> <span aria-current="page">Contacto</span></nav>
+        <h1>Contacto</h1>
+        <p class="page-hero__lead">Reserva, consulta precios o pregúntanos lo que necesites. Respondemos por WhatsApp y te esperamos en %%DIRECCION%%.</p>
+      </div>
+    </section>
+
+    <!-- TARJETAS DE CONTACTO -->
+    <section class="contact-cards" aria-label="Datos de contacto">
+      <div class="container contact-cards__grid">
+        <a class="ccard" href="%%MAPA_URL%%" target="_blank" rel="noopener" data-reveal>
+          <span class="ccard__ic"><svg class="ic" aria-hidden="true"><use href="#i-pin"/></svg></span>
+          <h2>Visítanos</h2>
+          <p>%%DIRECCION_COMPLETA%%</p>
+          <small>%%REFERENCIA%%</small>
+        </a>
+        <a class="ccard" href="%%WA_URL%%" target="_blank" rel="noopener" data-reveal>
+          <span class="ccard__ic"><svg class="ic ic--fill" aria-hidden="true"><use href="#i-whatsapp"/></svg></span>
+          <h2>WhatsApp</h2>
+          <p>%%TELEFONO%%</p>
+          <small>Escríbenos o llámanos</small>
+        </a>
+        <!-- SI:EMAIL --><a class="ccard" href="mailto:%%EMAIL%%" data-reveal>
+          <span class="ccard__ic"><svg class="ic" aria-hidden="true"><use href="#i-correo"/></svg></span>
+          <h2>Correo</h2>
+          <p class="ccard__mail">%%EMAIL%%</p>
+          <small>Respondemos tus consultas</small>
+        </a><!-- /SI:EMAIL -->
+        <div class="ccard" data-reveal>
+          <span class="ccard__ic"><svg class="ic" aria-hidden="true"><use href="#i-reloj"/></svg></span>
+          <h2>Horario</h2>
+          <p data-status-today>%%HORARIO_RESUMEN%%</p>
+          <small data-status-next></small>
+        </div>
+      </div>
+    </section>
+
+    <!-- FORMULARIO + HORARIO -->
+    <section class="section contact" aria-labelledby="formTitle">
+      <div class="container contact__grid">
+        <div class="contact__form" data-reveal>
+          <p class="kicker kicker--line">Escríbenos</p>
+          <h2 id="formTitle">Envíanos un mensaje</h2>
+          <p class="muted">Completa el formulario y se abrirá WhatsApp con tu mensaje listo para enviar.</p>
+          <form id="contactForm" class="form" novalidate>
+            <div class="row">
+              <label class="field">Nombre
+                <input id="cNombre" type="text" autocomplete="name" placeholder="Tu nombre" maxlength="60" required>
+              </label>
+              <label class="field">Motivo
+                <select id="cMotivo">
+                  <option>Reservar una hora</option>
+                  <option>Consultar precios</option>
+                  <option>Consultar por un servicio</option>
+                  <option>Otro</option>
+                </select>
+              </label>
+            </div>
+            <label class="field">Mensaje
+              <textarea id="cMensaje" rows="5" maxlength="600" placeholder="Cuéntanos qué necesitas" required></textarea>
+            </label>
+            <p class="form-error" id="cError" hidden></p>
+            <div class="form__actions">
+              <button class="btn btn--wa" type="submit"><svg class="ic ic--fill" aria-hidden="true"><use href="#i-whatsapp"/></svg> Enviar por WhatsApp</button>
+              <!-- SI:EMAIL --><a class="link-arrow" id="cMail" href="mailto:%%EMAIL%%">o envíalo por correo <svg class="ic" aria-hidden="true"><use href="#i-flecha"/></svg></a><!-- /SI:EMAIL -->
+            </div>
+          </form>
+        </div>
+
+        <aside class="contact__side" data-reveal>
+          <div class="panel">
+            <div class="hours__head"><h3><svg class="ic" aria-hidden="true"><use href="#i-reloj"/></svg> Horario de atención</h3><em class="status" data-status></em></div>
+            <ul class="hours__list" data-hours><!-- @HORARIO_TABLA --></ul>
+          </div>
+          <div class="panel panel--gold">
+            <h3>Reserva tu hora</h3>
+            <p>Elige servicio, barbero, día y hora, y te confirmamos por WhatsApp en minutos.</p>
+            <a class="btn btn--dark btn--block" href="%%RESERVA_URL%%" data-reservar><svg class="ic" aria-hidden="true"><use href="#i-calendario"/></svg> Reservar hora</a>
+          </div>
+          <div class="panel">
+            <h3>Síguenos</h3>
+            <div class="social social--big">
+              <!-- SI:INSTAGRAM_URL --><a href="%%INSTAGRAM_URL%%" target="_blank" rel="noopener"><svg class="ic" aria-hidden="true"><use href="#i-instagram"/></svg><span>Instagram</span></a><!-- /SI:INSTAGRAM_URL -->
+              <!-- SI:TIKTOK_URL --><a href="%%TIKTOK_URL%%" target="_blank" rel="noopener"><svg class="ic ic--fill" aria-hidden="true"><use href="#i-tiktok"/></svg><span>TikTok</span></a><!-- /SI:TIKTOK_URL -->
+              <!-- SI:FACEBOOK_URL --><a href="%%FACEBOOK_URL%%" target="_blank" rel="noopener"><svg class="ic ic--fill" aria-hidden="true"><use href="#i-facebook"/></svg><span>Facebook</span></a><!-- /SI:FACEBOOK_URL -->
+            </div>
+          </div>
+        </aside>
+      </div>
+    </section>
+
+    <!-- MAPA -->
+    <section class="mapwrap" aria-label="Mapa">
+      <iframe title="Mapa de %%NOMBRE%% en %%DIRECCION_COMPLETA%%" loading="lazy" referrerpolicy="no-referrer-when-downgrade" data-src="%%MAPA_EMBED%%"></iframe>
+      <div class="container mapwrap__inner">
+        <div class="mapcard" data-reveal>
+          <img src="/img/logo-200.webp" alt="" width="200" height="160" loading="lazy">
+          <h2>%%NOMBRE%%</h2>
+          <p>%%DIRECCION_COMPLETA%% · %%REGION%%</p>
+          <div class="mapcard__btns">
+            <a class="btn btn--gold btn--sm" href="%%MAPA_URL%%" target="_blank" rel="noopener"><svg class="ic" aria-hidden="true"><use href="#i-ruta"/></svg> Google Maps</a>
+            <a class="btn btn--line btn--sm" href="%%WAZE_URL%%" target="_blank" rel="noopener">Waze</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- PREGUNTAS FRECUENTES -->
+    <!-- SI:HAY_FAQ --><section class="section faq" aria-labelledby="faqTitle">
+      <div class="container faq__grid">
+        <header class="head" data-reveal>
+          <p class="kicker kicker--line">Preguntas frecuentes</p>
+          <h2 id="faqTitle">Antes de venir</h2>
+          <p class="head__sub">Lo que más nos preguntan por WhatsApp. ¿No encuentras tu respuesta? <a href="%%WA_URL%%" target="_blank" rel="noopener">Escríbenos</a>.</p>
+        </header>
+        <div class="faq__list">
+          <!-- @FAQ -->
+        </div>
+      </div>
+    </section><!-- /SI:HAY_FAQ -->
+
+<!-- #include footer.html -->
+</body>
+</html>

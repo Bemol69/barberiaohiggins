@@ -1,0 +1,13 @@
+{
+  "descripcion": "",
+  "incluye": [],
+  "nota": "Martes y jueves · menores de 18 años",
+  "etiqueta": "",
+  "barberos": [],
+  "visible": true,
+  "nombre": "Corte escolar",
+  "categoria": "cortes",
+  "precio": 9990,
+  "duracion": 45,
+  "orden": 40
+}

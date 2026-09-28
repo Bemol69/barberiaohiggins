@@ -1,0 +1,112 @@
+    <!-- LLAMADO FINAL -->
+    <section class="cta">
+      <div class="pole" aria-hidden="true"></div>
+      <div class="container cta__inner" data-reveal>
+        <img class="cta__logo" src="/img/logo-200.webp" alt="" width="200" height="160" loading="lazy">
+        <div class="cta__txt">
+          <h2>%%CTA_TITULO%%</h2>
+          <p>%%CTA_TEXTO%%</p>
+        </div>
+        <div class="cta__btns">
+          <a class="btn btn--gold btn--lg" href="%%RESERVA_URL%%" data-reservar><svg class="ic" aria-hidden="true"><use href="#i-calendario"/></svg> Reservar hora</a>
+          <a class="btn btn--line btn--lg" href="%%WA_URL%%" target="_blank" rel="noopener"><svg class="ic ic--fill" aria-hidden="true"><use href="#i-whatsapp"/></svg> WhatsApp</a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="container footer__grid">
+      <div class="footer__brand">
+        <img src="/img/logo.webp" alt="Logo de %%NOMBRE%%" width="480" height="384" loading="lazy">
+        <p>%%RUBRO%% en %%CIUDAD%%. %%NOSOTROS_FIRMA%%</p>
+        <div class="social">
+          <!-- SI:INSTAGRAM_URL --><a href="%%INSTAGRAM_URL%%" target="_blank" rel="noopener" aria-label="Instagram"><svg class="ic" aria-hidden="true"><use href="#i-instagram"/></svg></a><!-- /SI:INSTAGRAM_URL -->
+          <!-- SI:TIKTOK_URL --><a href="%%TIKTOK_URL%%" target="_blank" rel="noopener" aria-label="TikTok"><svg class="ic ic--fill" aria-hidden="true"><use href="#i-tiktok"/></svg></a><!-- /SI:TIKTOK_URL -->
+          <!-- SI:FACEBOOK_URL --><a href="%%FACEBOOK_URL%%" target="_blank" rel="noopener" aria-label="Facebook"><svg class="ic ic--fill" aria-hidden="true"><use href="#i-facebook"/></svg></a><!-- /SI:FACEBOOK_URL -->
+          <a href="%%WA_URL%%" target="_blank" rel="noopener" aria-label="WhatsApp"><svg class="ic ic--fill" aria-hidden="true"><use href="#i-whatsapp"/></svg></a>
+        </div>
+      </div>
+      <nav class="footer__col" aria-label="Secciones">
+        <h3>Navegación</h3>
+        <a href="/#nosotros">Nosotros</a>
+        <a href="/#precios">Servicios y precios</a>
+        <!-- SI:HAY_EQUIPO --><a href="/#equipo">Equipo</a><!-- /SI:HAY_EQUIPO -->
+        <!-- SI:HAY_GALERIA --><a href="/#galeria">Galería</a><!-- /SI:HAY_GALERIA -->
+        <a href="/contacto/">Contacto</a>
+      </nav>
+      <nav class="footer__col" aria-label="Servicios">
+        <h3>Servicios</h3>
+        <!-- @FOOTER_SERVICIOS -->
+      </nav>
+      <div class="footer__col">
+        <h3>Contacto</h3>
+        <a href="%%MAPA_URL%%" target="_blank" rel="noopener"><svg class="ic" aria-hidden="true"><use href="#i-pin"/></svg> %%DIRECCION_COMPLETA%%</a>
+        <a href="%%TEL_HREF%%"><svg class="ic" aria-hidden="true"><use href="#i-telefono"/></svg> %%TELEFONO%%</a>
+        <!-- SI:EMAIL --><a href="mailto:%%EMAIL%%"><svg class="ic" aria-hidden="true"><use href="#i-correo"/></svg> %%EMAIL%%</a><!-- /SI:EMAIL -->
+        <p><svg class="ic" aria-hidden="true"><use href="#i-reloj"/></svg> %%HORARIO_RESUMEN%%</p>
+      </div>
+    </div>
+    <div class="container footer__legal">
+      <span>© %%YEAR%% %%NOMBRE%% · %%CIUDAD%%, %%REGION%%</span>
+      <a href="#top" data-top>Volver arriba <svg class="ic" aria-hidden="true"><use href="#i-flecha"/></svg></a>
+    </div>
+  </footer>
+
+  <!-- Accesos rápidos -->
+  <a class="wa-float" href="%%WA_URL%%" target="_blank" rel="noopener" aria-label="Escribir por WhatsApp"><svg class="ic ic--fill" aria-hidden="true"><use href="#i-whatsapp"/></svg></a>
+  <div class="mbar" aria-label="Acciones rápidas">
+    <a class="mbar__main" href="%%RESERVA_URL%%" data-reservar><svg class="ic" aria-hidden="true"><use href="#i-calendario"/></svg> Reservar hora</a>
+    <a href="%%WA_URL%%" target="_blank" rel="noopener" aria-label="WhatsApp"><svg class="ic ic--fill" aria-hidden="true"><use href="#i-whatsapp"/></svg></a>
+    <a href="%%TEL_HREF%%" aria-label="Llamar"><svg class="ic" aria-hidden="true"><use href="#i-telefono"/></svg></a>
+  </div>
+
+  <!-- VENTANA DE RESERVA: arma la solicitud y la envía por WhatsApp -->
+  <div class="modal" id="modal" aria-hidden="true">
+    <div class="modal__backdrop" data-close></div>
+    <div class="modal__panel" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+      <button class="modal__close" type="button" data-close aria-label="Cerrar"><svg class="ic" aria-hidden="true"><use href="#i-cerrar"/></svg></button>
+      <p class="kicker">Reserva tu hora</p>
+      <h2 id="modalTitle">Agenda en <em>%%NOMBRE%%</em></h2>
+      <p class="modal__lead">Elige servicio, día y hora. Se abrirá WhatsApp con tu solicitud lista y te confirmamos por el mismo chat.</p>
+
+      <label class="field">Servicio
+        <select id="fServicio"></select>
+      </label>
+      <div class="modal__svc" id="svcInfo" hidden></div>
+
+
+      <form class="wa-form" id="waForm" novalidate>
+        <div class="row">
+          <label class="field">Día
+            <input id="fFecha" type="date" required>
+          </label>
+          <label class="field">Hora aprox.
+            <select id="fHora"></select>
+          </label>
+        </div>
+        <div class="row">
+          <label class="field">Barbero
+            <select id="fBarbero"></select>
+          </label>
+          <label class="field">Tu nombre
+            <input id="fNombre" type="text" autocomplete="given-name" placeholder="Ej: Matías" maxlength="40">
+          </label>
+        </div>
+        <p class="form-error" id="waError" hidden></p>
+        <button class="btn btn--wa btn--block" type="submit"><svg class="ic ic--fill" aria-hidden="true"><use href="#i-whatsapp"/></svg> Enviar solicitud por WhatsApp</button>
+        <p class="hint"><svg class="ic" aria-hidden="true"><use href="#i-info"/></svg> La hora queda reservada cuando te la confirmamos.</p>
+      </form>
+    </div>
+  </div>
+
+  <!-- VISOR DE FOTOS -->
+  <div class="lightbox" id="lightbox" aria-hidden="true" role="dialog" aria-label="Foto ampliada">
+    <button class="lightbox__btn lightbox__close" type="button" data-lb="close" aria-label="Cerrar"><svg class="ic" aria-hidden="true"><use href="#i-cerrar"/></svg></button>
+    <button class="lightbox__btn lightbox__prev" type="button" data-lb="prev" aria-label="Foto anterior"><svg class="ic" aria-hidden="true"><use href="#i-flecha-izq"/></svg></button>
+    <figure><img id="lbImg" alt=""><figcaption id="lbCap"></figcaption></figure>
+    <button class="lightbox__btn lightbox__next" type="button" data-lb="next" aria-label="Foto siguiente"><svg class="ic" aria-hidden="true"><use href="#i-flecha"/></svg></button>
+  </div>
+
+  <!-- WEB:DATA -->
+  <script src="/app.js" defer></script>

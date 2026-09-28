@@ -1,0 +1,8 @@
+{
+  "nombre": "Cabello + barba",
+  "descripcion": "Corte, barba y cejas en una sola visita.",
+  "foto": "/img/fotos/servicio-cabello-barba.webp",
+  "icono": "combo",
+  "orden": 20,
+  "visible": true
+}

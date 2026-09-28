@@ -1,0 +1,17 @@
+{
+  "descripcion": "",
+  "incluye": [],
+  "nota": "",
+  "etiqueta": "",
+  "barberos": [
+    "criss",
+    "daylan",
+    "benja"
+  ],
+  "visible": true,
+  "nombre": "Depilación con cera",
+  "categoria": "cejas-y-rostro",
+  "precio": 10000,
+  "duracion": 14,
+  "orden": 30
+}

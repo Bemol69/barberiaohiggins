@@ -1,0 +1,57 @@
+{
+  "hero_kicker": "Barbería en Rancagua · Alcázar 320",
+  "hero_titulo": "Tradición y tendencia",
+  "hero_destacado": "para tu look.",
+  "hero_bajada": "Cortes clásicos y modernos, barba y cejas en el centro de Rancagua. Un ambiente cálido y profesional, con barberos que te asesoran de verdad.",
+  "hero_fotos": [
+    {
+      "foto": "/img/fotos/portada-joven-flow.webp",
+      "alt": "Cliente joven con corte texturizado en Barbería O'Higgins",
+      "foco": "center"
+    },
+    {
+      "foto": "/img/fotos/portada-barbero-trabajando.webp",
+      "alt": "Barbero haciendo un degradado en Barbería O'Higgins",
+      "foco": "center"
+    },
+    {
+      "foto": "/img/fotos/portada-fade-barba.webp",
+      "alt": "Degradado con barba hecho en Barbería O'Higgins",
+      "foco": "center"
+    },
+    {
+      "foto": "/img/fotos/portada-local.webp",
+      "alt": "Interior de Barbería O'Higgins en Alcázar 320, Rancagua",
+      "foco": "center"
+    }
+  ],
+  "nosotros_titulo": "Donde la tradición y el estilo se unen",
+  "nosotros_texto": "Barbería O'Higgins es un espacio donde la tradición y el estilo se unen. Hacemos cortes clásicos y modernos, barba y cejas, en un ambiente cálido y profesional.\n\nInspirados en el carácter del Libertador Bernardo O'Higgins, buscamos reflejar elegancia, respeto y distinción en cada servicio. Nuestro equipo combina técnica, dedicación y cercanía, con atención personalizada y comunicación directa por WhatsApp.",
+  "nosotros_firma": "Tradición, estilo y carácter.",
+  "video_titulo": "Así se trabaja en la silla",
+  "video_texto": "Degradados, tijera, barba y detalle. Un poco de lo que pasa cada día en Alcázar 320, grabado por nosotros.",
+  "cta_titulo": "¿Listo para tu próximo corte?",
+  "cta_texto": "Elige servicio, día y hora en menos de un minuto y te confirmamos por WhatsApp. Te esperamos en Alcázar 320.",
+  "faq": [
+    {
+      "pregunta": "¿Cómo reservo una hora?",
+      "respuesta": "Desde esta web: toca «Reservar», elige servicio, barbero, día y hora, y se abre WhatsApp con tu solicitud lista para enviar. Te confirmamos por el mismo chat. También puedes escribirnos o llamarnos al {telefono}."
+    },
+    {
+      "pregunta": "¿Puedo elegir a mi barbero?",
+      "respuesta": "Sí. Al reservar puedes elegir a {barberos}, o dejar que te atienda el primero que esté disponible."
+    },
+    {
+      "pregunta": "¿Cuál es el horario?",
+      "respuesta": "{horario}."
+    },
+    {
+      "pregunta": "¿Tienen precio para escolares?",
+      "respuesta": "Sí. El corte escolar cuesta $9.990 los martes y jueves, para menores de 18 años."
+    },
+    {
+      "pregunta": "¿Dónde están ubicados?",
+      "respuesta": "En {direccion}, {ciudad}, en el centro de la ciudad."
+    }
+  ]
+}

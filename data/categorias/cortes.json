@@ -1,0 +1,8 @@
+{
+  "nombre": "Cortes",
+  "descripcion": "Clásicos o modernos, a máquina o solo con tijera.",
+  "foto": "/img/fotos/servicio-cortes.webp",
+  "icono": "tijeras",
+  "orden": 10,
+  "visible": true
+}

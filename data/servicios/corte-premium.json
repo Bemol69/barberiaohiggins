@@ -1,0 +1,13 @@
+{
+  "descripcion": "Más tiempo y detalle para tu corte.",
+  "incluye": [],
+  "nota": "",
+  "etiqueta": "",
+  "barberos": [],
+  "visible": true,
+  "nombre": "Corte premium",
+  "categoria": "cortes",
+  "precio": 15990,
+  "duracion": 60,
+  "orden": 20
+}

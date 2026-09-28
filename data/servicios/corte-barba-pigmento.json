@@ -1,0 +1,17 @@
+{
+  "descripcion": "",
+  "incluye": [],
+  "nota": "",
+  "etiqueta": "",
+  "barberos": [
+    "criss",
+    "daylan",
+    "alejandro"
+  ],
+  "visible": true,
+  "nombre": "Corte + barba + pigmento",
+  "categoria": "cabello-y-barba",
+  "precio": 30000,
+  "duracion": 60,
+  "orden": 50
+}

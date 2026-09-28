@@ -1,38 +1,34 @@
 {
-  "_ayuda": "Datos fijos de la barbería (los define el desarrollador). Los datos de contacto, horario, portada, barberos y galería van en data/ajustes.json, que el cliente edita desde /admin.",
+  "_ayuda": "Datos fijos de la web (los define el desarrollador). Contacto, horario, textos, servicios, equipo, galería y reseñas están en data/ y se editan desde /admin.",
   "nombre": "Barbería O'Higgins",
-  "marca_a": "Barbería",
-  "marca_b": "O'Higgins",
   "rubro": "Barbería",
   "schema_tipo": "BarberShop",
-  "seo_titulo": "Barbería en Rancagua | Barbería O'Higgins · Cortes, barba y masajes",
-  "seo_descripcion": "Barbería O'Higgins, en Alcázar 320, Rancagua. Cortes clásicos y modernos, perfilado de barba y masajes de relajación. Agenda tu hora por WhatsApp.",
+  "seo_titulo": "Barbería en Rancagua | Barbería O'Higgins · Cortes, barba y cejas",
+  "seo_descripcion": "Barbería O'Higgins en Alcázar 320, Rancagua. Cortes clásicos y modernos, barba y cejas. 4,9 estrellas en 101 reseñas. Revisa precios y reserva tu hora por WhatsApp.",
   "github_repo": "Bemol69/barberiaohiggins",
+  "github_rama": "claude/bold-turing-u8petk",
   "site_url": "https://barberiaohiggins.vercel.app",
   "google_verificacion": "",
-  "hero": [
-    { "foto": "img/fotos/portada-1.jpg", "alt": "Barbería O'Higgins en Rancagua" },
-    { "foto": "img/fotos/portada-2.jpg", "alt": "Tradición y estilo en Barbería O'Higgins" },
-    { "foto": "img/fotos/portada-3.jpg", "alt": "Barbería O'Higgins, Alcázar 320" }
-  ],
   "fuentes": {
-    "titulos": "Playfair Display",
+    "titulos": "Prata",
     "texto": "Barlow",
-    "pesos_titulos": "600;700"
+    "etiquetas": "Barlow Condensed"
   },
   "colores": {
-    "fondo": "#0A0D0C",
-    "primario": "#17845A",
-    "primario_oscuro": "#0F6343",
-    "primario_claro": "#0F241B",
-    "secundario": "#2A4FB5",
-    "secundario_claro": "#131A2C",
-    "acento": "#EDE6D8",
-    "acento_claro": "#151A18",
-    "tinta": "#F4EFE5",
-    "tinta_suave": "#A8A395",
-    "extra": "#D4AD5A",
-    "dorado": "#D4AD5A"
-  },
-  "dias_schema": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"]
+    "fondo": "#0D1110",
+    "fondo_2": "#141A17",
+    "fondo_3": "#1B2320",
+    "crema": "#F4EEE3",
+    "crema_2": "#EAE1CF",
+    "tinta": "#161917",
+    "tinta_suave": "#5F5A50",
+    "claro": "#EFE9DC",
+    "claro_suave": "#A9A393",
+    "dorado": "#C9A254",
+    "dorado_claro": "#E2C179",
+    "verde": "#1D6B45",
+    "verde_oscuro": "#0E3624",
+    "azul": "#1E4A96",
+    "rojo": "#B3261E"
+  }
 }

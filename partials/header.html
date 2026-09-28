@@ -1,0 +1,48 @@
+  <a class="skip" href="#main">Saltar al contenido</a>
+
+  <div class="site-head" id="siteHead">
+    <!-- Franja superior: dirección, estado del local y redes -->
+    <div class="topbar">
+      <div class="container topbar__inner">
+        <a class="topbar__item" href="%%MAPA_URL%%" target="_blank" rel="noopener"><svg class="ic" aria-hidden="true"><use href="#i-pin"/></svg> %%DIRECCION_COMPLETA%%</a>
+        <p class="topbar__item"><svg class="ic" aria-hidden="true"><use href="#i-reloj"/></svg> <span data-status-line>%%HORARIO_RESUMEN%%</span></p>
+        <div class="topbar__right">
+          <a class="topbar__item" href="%%TEL_HREF%%"><svg class="ic" aria-hidden="true"><use href="#i-telefono"/></svg> %%TELEFONO%%</a>
+          <span class="topbar__social">
+            <!-- SI:INSTAGRAM_URL --><a href="%%INSTAGRAM_URL%%" target="_blank" rel="noopener" aria-label="Instagram"><svg class="ic" aria-hidden="true"><use href="#i-instagram"/></svg></a><!-- /SI:INSTAGRAM_URL -->
+            <!-- SI:TIKTOK_URL --><a href="%%TIKTOK_URL%%" target="_blank" rel="noopener" aria-label="TikTok"><svg class="ic ic--fill" aria-hidden="true"><use href="#i-tiktok"/></svg></a><!-- /SI:TIKTOK_URL -->
+            <!-- SI:FACEBOOK_URL --><a href="%%FACEBOOK_URL%%" target="_blank" rel="noopener" aria-label="Facebook"><svg class="ic ic--fill" aria-hidden="true"><use href="#i-facebook"/></svg></a><!-- /SI:FACEBOOK_URL -->
+          </span>
+        </div>
+      </div>
+    </div>
+
+    <header class="header">
+      <div class="container header__inner">
+        <a class="brand" href="/" aria-label="%%NOMBRE%%, inicio">
+          <img src="/img/logo-200.webp" alt="" width="200" height="160">
+          <span class="brand__txt"><b>%%NOMBRE%%</b><small>%%CIUDAD%% · Chile</small></span>
+        </a>
+
+        <nav class="nav" id="nav" aria-label="Menú principal">
+          <a href="/" data-nav="inicio">Inicio</a>
+          <a href="/#nosotros" data-nav="nosotros">Nosotros</a>
+          <a href="/#precios" data-nav="precios">Servicios</a>
+          <!-- SI:HAY_EQUIPO --><a href="/#equipo" data-nav="equipo">Equipo</a><!-- /SI:HAY_EQUIPO -->
+          <!-- SI:HAY_GALERIA --><a href="/#galeria" data-nav="galeria">Galería</a><!-- /SI:HAY_GALERIA -->
+          <!-- SI:HAY_RESENAS --><a href="/#resenas" data-nav="resenas">Reseñas</a><!-- /SI:HAY_RESENAS -->
+          <a href="/contacto/" data-nav="contacto">Contacto</a>
+          <div class="nav__extra">
+            <a class="btn btn--gold btn--block" href="%%RESERVA_URL%%" data-reservar><svg class="ic" aria-hidden="true"><use href="#i-calendario"/></svg> Reservar hora</a>
+            <a class="btn btn--line btn--block" href="%%WA_URL%%" target="_blank" rel="noopener"><svg class="ic ic--fill" aria-hidden="true"><use href="#i-whatsapp"/></svg> Escribir por WhatsApp</a>
+            <p>%%DIRECCION_COMPLETA%%<br>%%HORARIO_RESUMEN%%</p>
+          </div>
+        </nav>
+
+        <div class="header__actions">
+          <a class="btn btn--gold btn--sm header__cta" href="%%RESERVA_URL%%" data-reservar>Reservar hora</a>
+          <button class="burger" id="burger" type="button" aria-label="Abrir menú" aria-expanded="false" aria-controls="nav"><span></span><span></span><span></span></button>
+        </div>
+      </div>
+    </header>
+  </div>

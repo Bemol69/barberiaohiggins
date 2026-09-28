@@ -1,0 +1,13 @@
+{
+  "descripcion": "",
+  "incluye": [],
+  "nota": "",
+  "etiqueta": "",
+  "barberos": [],
+  "visible": true,
+  "nombre": "Corte + barba + cejas",
+  "categoria": "cabello-y-barba",
+  "precio": 22000,
+  "duracion": 50,
+  "orden": 20
+}

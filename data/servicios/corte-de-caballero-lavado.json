@@ -1,0 +1,16 @@
+{
+  "descripcion": "",
+  "incluye": [],
+  "nota": "",
+  "etiqueta": "Promo 40%",
+  "barberos": [
+    "daylan",
+    "benja"
+  ],
+  "visible": true,
+  "nombre": "Corte de caballero + lavado",
+  "categoria": "cortes",
+  "precio": 9990,
+  "duracion": 45,
+  "orden": 50
+}

@@ -1,0 +1,8 @@
+{
+  "nombre": "Barba",
+  "descripcion": "Corte, perfilado y tintura de barba.",
+  "foto": "/img/fotos/servicio-barba.webp",
+  "icono": "barba",
+  "orden": 30,
+  "visible": true
+}

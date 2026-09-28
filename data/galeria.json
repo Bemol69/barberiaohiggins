@@ -1,0 +1,52 @@
+{
+  "fotos": [
+    {
+      "foto": "/img/fotos/corte-fade-texturizado.webp",
+      "texto": "Degradado con textura arriba"
+    },
+    {
+      "foto": "/img/fotos/corte-clasico-barba.webp",
+      "texto": "Corte clásico con barba perfilada"
+    },
+    {
+      "foto": "/img/fotos/corte-rizos-fade.webp",
+      "texto": "Rizos con degradado"
+    },
+    {
+      "foto": "/img/fotos/corte-diseno-linea.webp",
+      "texto": "Degradado con diseño"
+    },
+    {
+      "foto": "/img/fotos/corte-crop-texturizado.webp",
+      "texto": "Crop texturizado"
+    },
+    {
+      "foto": "/img/fotos/corte-flequillo-fade.webp",
+      "texto": "Flequillo con degradado"
+    },
+    {
+      "foto": "/img/fotos/corte-rizos-barba.webp",
+      "texto": "Rizos y barba"
+    },
+    {
+      "foto": "/img/fotos/corte-fade-puntas.webp",
+      "texto": "Degradado con puntas"
+    },
+    {
+      "foto": "/img/fotos/corte-taper-nuca.webp",
+      "texto": "Taper en la nuca"
+    },
+    {
+      "foto": "/img/fotos/corte-infantil-clasico.webp",
+      "texto": "Corte infantil clásico"
+    },
+    {
+      "foto": "/img/fotos/corte-flequillo-texturizado.webp",
+      "texto": "Flequillo texturizado"
+    },
+    {
+      "foto": "/img/fotos/corte-low-fade.webp",
+      "texto": "Low fade"
+    }
+  ]
+}
