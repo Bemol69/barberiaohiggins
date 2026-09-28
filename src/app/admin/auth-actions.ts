@@ -16,6 +16,9 @@ function safeEqual(a: string, b: string) {
 export async function login(_prev: LoginState, formData: FormData): Promise<LoginState> {
   const expected = process.env.ADMIN_PASSWORD;
   if (!expected) return { error: "Falta configurar ADMIN_PASSWORD en el servidor." };
+  if (process.env.NODE_ENV === "production" && (process.env.SESSION_SECRET ?? "").length < 32) {
+    return { error: "Falta configurar SESSION_SECRET (32+ caracteres) en el servidor." };
+  }
 
   const password = String(formData.get("password") ?? "");
   // Pequeña pausa para frenar intentos por fuerza bruta.

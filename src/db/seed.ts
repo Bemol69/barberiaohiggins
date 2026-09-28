@@ -9,8 +9,8 @@ import * as schema from "./schema";
 
 async function main() {
   const client = createClient({
-    url: process.env.DATABASE_URL ?? "file:local.db",
-    authToken: process.env.DATABASE_AUTH_TOKEN,
+    url: process.env.DATABASE_URL?.trim() || "file:local.db",
+    authToken: process.env.DATABASE_AUTH_TOKEN?.trim() || undefined,
   });
   const db = drizzle(client, { schema });
 

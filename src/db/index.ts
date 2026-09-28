@@ -7,8 +7,8 @@ const globalForDb = globalThis as unknown as { libsql?: ReturnType<typeof create
 const client =
   globalForDb.libsql ??
   createClient({
-    url: process.env.DATABASE_URL ?? "file:local.db",
-    authToken: process.env.DATABASE_AUTH_TOKEN,
+    url: process.env.DATABASE_URL?.trim() || "file:local.db",
+    authToken: process.env.DATABASE_AUTH_TOKEN?.trim() || undefined,
   });
 
 if (process.env.NODE_ENV !== "production") globalForDb.libsql = client;
