@@ -28,3 +28,12 @@ export function initials(name: string): string {
     .map((w) => w[0]!.toUpperCase())
     .join("");
 }
+
+/** Destino de los botones "Reservar": link externo si está configurado, si no WhatsApp con mensaje. */
+export function bookingHref(business: { bookingUrl: string; whatsapp: string }, detail?: string): string {
+  if (business.bookingUrl) return business.bookingUrl;
+  return whatsappLink(
+    business.whatsapp,
+    `Hola! Quiero reservar una hora${detail ? ` ${detail}` : ""} 💈`,
+  );
+}

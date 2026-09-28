@@ -10,53 +10,49 @@ import {
   IconStar,
   IconWhatsapp,
 } from "@/components/icons";
-import { getActiveBarbers, getActiveReviews, getActiveServices, getGallery, getHours, getSettings } from "@/lib/data";
-import { formatCLP, formatDuration, formatPhone, initials, whatsappLink } from "@/lib/format";
+import { getContent } from "@/lib/content";
+import { bookingHref, formatCLP, formatDuration, formatPhone, initials, whatsappLink } from "@/lib/format";
 import { WEEKDAYS, nowInChile, toMinutes, weekdayOf } from "@/lib/time";
 
 export default async function HomePage() {
-  const [settings, services, barbers, hours, gallery, reviews] = await Promise.all([
-    getSettings(),
-    getActiveServices(),
-    getActiveBarbers(),
-    getHours(),
-    getGallery(),
-    getActiveReviews(),
-  ]);
+  const content = await getContent();
+  const { business, hours, gallery, reviews } = content;
+  const services = content.services.filter((s) => s.visible);
+  const barbers = content.team.filter((b) => b.visible);
 
   const now = nowInChile();
   const todayIdx = weekdayOf(now.date);
   const today = hours.find((h) => h.weekday === todayIdx);
   const openNow =
-    !!today?.isOpen && now.minutes >= toMinutes(today.openTime) && now.minutes < toMinutes(today.closeTime);
+    !!today?.isOpen && now.minutes >= toMinutes(today.open) && now.minutes < toMinutes(today.close);
 
   const categories = Array.from(new Set(services.map((s) => s.category)));
   const orderedHours = [1, 2, 3, 4, 5, 6, 0].map((d) => hours.find((h) => h.weekday === d)).filter(Boolean);
-  const mapQuery = encodeURIComponent(`${settings.address}, ${settings.city}`);
+  const mapQuery = encodeURIComponent(`${business.address}, ${business.city}`);
   const fromPrice = services.length ? Math.min(...services.map((s) => s.price)) : null;
 
   const dayCodes = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "BarberShop",
-    name: settings.name,
-    description: settings.description,
-    telephone: `+${settings.whatsapp}`,
+    name: business.name,
+    description: business.description,
+    telephone: `+${business.whatsapp}`,
     address: {
       "@type": "PostalAddress",
-      streetAddress: settings.address,
+      streetAddress: business.address,
       addressLocality: "Rancagua",
       addressRegion: "O'Higgins",
       addressCountry: "CL",
     },
     priceRange: fromPrice ? `Desde ${formatCLP(fromPrice)}` : undefined,
-    sameAs: settings.instagram ? [`https://instagram.com/${settings.instagram}`] : undefined,
-    aggregateRating: settings.reviewsCount
-      ? { "@type": "AggregateRating", ratingValue: settings.rating, reviewCount: settings.reviewsCount }
+    sameAs: business.instagram ? [`https://instagram.com/${business.instagram}`] : undefined,
+    aggregateRating: business.reviewsCount
+      ? { "@type": "AggregateRating", ratingValue: business.rating, reviewCount: business.reviewsCount }
       : undefined,
     openingHoursSpecification: hours
       .filter((h) => h.isOpen)
-      .map((h) => ({ "@type": "OpeningHoursSpecification", dayOfWeek: dayCodes[h.weekday], opens: h.openTime, closes: h.closeTime })),
+      .map((h) => ({ "@type": "OpeningHoursSpecification", dayOfWeek: dayCodes[h.weekday], opens: h.open, closes: h.close })),
   };
 
   return (
@@ -77,9 +73,9 @@ export default async function HomePage() {
           <div className="animate-fade-up">
             <div className="inline-flex items-center gap-3 rounded-full border border-bone-100/12 bg-ink-800/60 py-1.5 pl-1.5 pr-4 backdrop-blur">
               <span className="flex items-center gap-1 rounded-full bg-gold-400 px-2.5 py-1 text-xs font-bold text-ink-900">
-                <IconStar width={12} height={12} /> {settings.rating}
+                <IconStar width={12} height={12} /> {business.rating}
               </span>
-              <span className="text-xs text-bone-300">{settings.reviewsCount} reseñas de clientes</span>
+              <span className="text-xs text-bone-300">{business.reviewsCount} reseñas de clientes</span>
             </div>
 
             <h1 className="mt-8 font-display text-[clamp(2.9rem,7.5vw,6.2rem)] font-medium leading-[0.95] tracking-[-0.02em] text-bone-50">
@@ -96,9 +92,9 @@ export default async function HomePage() {
             </p>
 
             <div className="mt-10 flex flex-wrap items-center gap-4">
-              <Link href="/reservar" className="btn-gold !px-8 !py-4 text-base">
+              <a href={bookingHref(business)} target="_blank" rel="noreferrer" className="btn-gold !px-8 !py-4 text-base">
                 Reservar hora <IconArrowRight />
-              </Link>
+              </a>
               <Link href="#servicios" className="btn-ghost !px-8 !py-4 text-base">
                 Ver servicios
               </Link>
@@ -127,18 +123,18 @@ export default async function HomePage() {
           <div className="relative mx-auto w-full max-w-md animate-fade-up [animation-delay:150ms] lg:max-w-none">
             <div className="absolute -inset-4 rounded-t-[999px] border border-gold-400/25" />
             <div className="relative aspect-[4/5] overflow-hidden rounded-t-[999px] border border-gold-400/40 bg-gradient-to-b from-emerald-800 via-emerald-900 to-ink-900 shadow-2xl shadow-black/60">
-              {settings.heroImageUrl ? (
+              {business.heroImageUrl ? (
                 // eslint-disable-next-line @next/next/no-img-element
-                <img src={settings.heroImageUrl} alt={settings.name} className="h-full w-full object-cover" />
+                <img src={business.heroImageUrl} alt={business.name} className="h-full w-full object-cover" />
               ) : (
                 <div className="grid h-full place-items-center">
                   <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_35%,rgba(63,168,127,0.35),transparent_60%)]" />
-                  <BrandMark logoUrl={settings.logoUrl} className="relative w-3/4 drop-shadow-[0_20px_40px_rgba(0,0,0,0.6)]" />
+                  <BrandMark logoUrl={business.logoUrl} className="relative w-3/4 drop-shadow-[0_20px_40px_rgba(0,0,0,0.6)]" />
                 </div>
               )}
               <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-ink-950/95 to-transparent p-6 pt-20">
                 <p className="eyebrow text-gold-300">Rancagua · Chile</p>
-                <p className="mt-2 font-display text-2xl text-bone-50">{settings.address}</p>
+                <p className="mt-2 font-display text-2xl text-bone-50">{business.address}</p>
               </div>
             </div>
             <div className="pole-stripe absolute -left-3 top-1/4 hidden h-40 w-3 rounded-full shadow-lg lg:block" />
@@ -173,8 +169,8 @@ export default async function HomePage() {
                 <em className="italic text-emerald-700">resultados finos.</em>
               </h2>
               <p className="mt-6 max-w-md text-ink-600">
-                Cada servicio incluye asesoría y terminación al detalle. Reserva online en menos de un minuto y elige a
-                tu barbero de confianza.
+                Cada servicio incluye asesoría y terminación al detalle. Toca cualquier servicio para pedir tu hora por
+                WhatsApp.
               </p>
               <div className="mt-8 flex gap-6 text-emerald-700">
                 <IconScissors width={28} height={28} />
@@ -195,8 +191,10 @@ export default async function HomePage() {
                       .filter((s) => s.category === cat)
                       .map((s) => (
                         <li key={s.id} className="group">
-                          <Link
-                            href={`/reservar?servicio=${s.id}`}
+                          <a
+                            href={bookingHref(business, `para ${s.name}`)}
+                            target="_blank"
+                            rel="noreferrer"
                             className="-mx-4 flex items-start gap-6 rounded-2xl px-4 py-6 transition hover:bg-bone-50"
                           >
                             <div className="min-w-0 flex-1">
@@ -219,7 +217,7 @@ export default async function HomePage() {
                                 Reservar <IconArrowRight width={14} height={14} />
                               </span>
                             </div>
-                          </Link>
+                          </a>
                         </li>
                       ))}
                   </ul>
@@ -239,12 +237,12 @@ export default async function HomePage() {
             <blockquote className="mt-6 font-display text-[clamp(2rem,4vw,3.25rem)] font-light leading-[1.12] text-bone-50">
               “Elegancia, respeto y <em className="gold-text italic">distinción</em> en cada servicio.”
             </blockquote>
-            <p className="mt-8 max-w-xl leading-relaxed text-bone-300">{settings.description}</p>
+            <p className="mt-8 max-w-xl leading-relaxed text-bone-300">{business.description}</p>
           </div>
           <div className="grid grid-cols-2 gap-4">
             {[
-              { k: settings.rating, v: "Calificación promedio", icon: <IconStar className="text-gold-400" /> },
-              { k: String(settings.reviewsCount), v: "Reseñas de clientes", icon: <IconSparkle className="text-gold-400" /> },
+              { k: business.rating, v: "Calificación promedio", icon: <IconStar className="text-gold-400" /> },
+              { k: String(business.reviewsCount), v: "Reseñas de clientes", icon: <IconSparkle className="text-gold-400" /> },
               { k: String(services.length), v: "Servicios a tu medida", icon: <IconScissors className="text-gold-400" /> },
               { k: "WhatsApp", v: "Atención directa", icon: <IconWhatsapp className="text-gold-400" /> },
             ].map((s, i) => (
@@ -272,12 +270,12 @@ export default async function HomePage() {
                   Manos <em className="italic text-gold-300">expertas</em>
                 </h2>
               </div>
-              <p className="max-w-sm text-bone-400">Elige a tu barbero al reservar o déjanos asignarte al primero disponible.</p>
+              <p className="max-w-sm text-bone-400">Pide hora con tu barbero de confianza directo por WhatsApp.</p>
             </div>
 
             <div className="mt-14 grid grid-cols-2 gap-4 sm:gap-6 lg:grid-cols-4">
               {barbers.map((b, i) => (
-                <Link key={b.id} href={`/reservar?barbero=${b.id}`} className="group">
+                <a key={b.id} href={bookingHref(business, `con ${b.name}`)} target="_blank" rel="noreferrer" className="group">
                   <div className="relative aspect-[3/4] overflow-hidden rounded-t-[999px] rounded-b-3xl border border-bone-100/10 bg-gradient-to-b from-emerald-800 to-ink-900">
                     {b.photoUrl ? (
                       // eslint-disable-next-line @next/next/no-img-element
@@ -300,7 +298,7 @@ export default async function HomePage() {
                     <p className="font-display text-2xl text-bone-50">{b.name}</p>
                     <p className="text-sm text-bone-400">{b.role}</p>
                   </div>
-                </Link>
+                </a>
               ))}
             </div>
           </div>
@@ -340,12 +338,12 @@ export default async function HomePage() {
                 <h2 className="mt-4 font-display text-5xl font-medium tracking-tight">Clientes que vuelven</h2>
               </div>
               <div className="flex items-center gap-3">
-                <span className="font-display text-5xl">{settings.rating}</span>
+                <span className="font-display text-5xl">{business.rating}</span>
                 <div>
                   <div className="flex text-gold-500">
                     {Array.from({ length: 5 }).map((_, i) => <IconStar key={i} width={16} height={16} />)}
                   </div>
-                  <p className="text-sm text-ink-500">{settings.reviewsCount} reseñas</p>
+                  <p className="text-sm text-ink-500">{business.reviewsCount} reseñas</p>
                 </div>
               </div>
             </div>
@@ -388,8 +386,8 @@ export default async function HomePage() {
                 <div className="flex items-start gap-4">
                   <span className="grid h-11 w-11 shrink-0 place-items-center rounded-full bg-emerald-800 text-gold-300"><IconPin /></span>
                   <div>
-                    <p className="font-display text-2xl text-bone-50">{settings.address}</p>
-                    <p className="text-bone-400">{settings.city}</p>
+                    <p className="font-display text-2xl text-bone-50">{business.address}</p>
+                    <p className="text-bone-400">{business.city}</p>
                     <a
                       href={`https://www.google.com/maps/dir/?api=1&destination=${mapQuery}`}
                       target="_blank"
@@ -403,8 +401,8 @@ export default async function HomePage() {
                 <div className="mt-6 flex items-start gap-4 border-t border-bone-100/8 pt-6">
                   <span className="grid h-11 w-11 shrink-0 place-items-center rounded-full bg-emerald-800 text-gold-300"><IconWhatsapp /></span>
                   <div>
-                    <a href={whatsappLink(settings.whatsapp)} target="_blank" rel="noreferrer" className="font-display text-2xl text-bone-50 hover:text-gold-300">
-                      {formatPhone(settings.whatsapp)}
+                    <a href={whatsappLink(business.whatsapp)} target="_blank" rel="noreferrer" className="font-display text-2xl text-bone-50 hover:text-gold-300">
+                      {formatPhone(business.whatsapp)}
                     </a>
                     <p className="text-bone-400">Escríbenos por WhatsApp</p>
                   </div>
@@ -427,7 +425,7 @@ export default async function HomePage() {
                       }`}
                     >
                       <span>{WEEKDAYS[h!.weekday]}</span>
-                      <span className="tabular-nums">{h!.isOpen ? `${h!.openTime} – ${h!.closeTime}` : "Cerrado"}</span>
+                      <span className="tabular-nums">{h!.isOpen ? `${h!.open} – ${h!.close}` : "Cerrado"}</span>
                     </li>
                   ))}
                 </ul>
@@ -441,20 +439,26 @@ export default async function HomePage() {
       <section className="grain relative overflow-hidden bg-emerald-800 py-24">
         <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_80%_20%,rgba(212,173,90,0.25),transparent_50%)]" />
         <div className="relative mx-auto flex max-w-5xl flex-col items-center px-5 text-center sm:px-8">
-          <BrandMark logoUrl={settings.logoUrl} className="h-20 w-20" />
+          <BrandMark logoUrl={business.logoUrl} className="h-20 w-20" />
           <h2 className="mt-8 font-display text-[clamp(2.5rem,6vw,4.5rem)] font-medium leading-none tracking-tight text-bone-50">
             Tu próximo corte
             <br />
             <em className="gold-text italic">te está esperando.</em>
           </h2>
-          <p className="mt-6 max-w-lg text-bone-200">Reserva online en segundos o escríbenos por WhatsApp.</p>
+          <p className="mt-6 max-w-lg text-bone-200">Reserva en segundos y te esperamos en {business.address}.</p>
           <div className="mt-10 flex flex-wrap justify-center gap-4">
-            <Link href="/reservar" className="btn-gold !px-8 !py-4 text-base">
+            <a href={bookingHref(business)} target="_blank" rel="noreferrer" className="btn-gold !px-8 !py-4 text-base">
               Reservar hora <IconArrowRight />
-            </Link>
-            <a href={whatsappLink(settings.whatsapp, "Hola! Quisiera reservar una hora 💈")} target="_blank" rel="noreferrer" className="btn-ghost !px-8 !py-4 text-base">
-              <IconWhatsapp /> WhatsApp
             </a>
+            {business.bookingUrl ? (
+              <a href={whatsappLink(business.whatsapp, "Hola! Tengo una consulta 💈")} target="_blank" rel="noreferrer" className="btn-ghost !px-8 !py-4 text-base">
+                <IconWhatsapp /> WhatsApp
+              </a>
+            ) : (
+              <a href={`https://www.google.com/maps/dir/?api=1&destination=${mapQuery}`} target="_blank" rel="noreferrer" className="btn-ghost !px-8 !py-4 text-base">
+                <IconPin /> Cómo llegar
+              </a>
+            )}
           </div>
         </div>
       </section>

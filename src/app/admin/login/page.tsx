@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import { Crest } from "@/components/crest";
-import { isAdmin } from "@/lib/auth";
+import { isAdmin } from "@/lib/admin-session";
 import { LoginForm } from "./login-form";
 
 export const metadata: Metadata = { title: "Ingresar", robots: { index: false } };
@@ -15,7 +15,7 @@ export default async function LoginPage() {
       <div className="relative w-full max-w-sm">
         <div className="flex flex-col items-center text-center">
           <Crest className="h-20 w-20" />
-          <p className="eyebrow mt-6 text-gold-400">Panel de gestión</p>
+          <p className="eyebrow mt-6 text-gold-400">Administrar web</p>
           <h1 className="mt-2 font-display text-4xl text-bone-50">Barbería O&apos;Higgins</h1>
         </div>
         <LoginForm />

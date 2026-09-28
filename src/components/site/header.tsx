@@ -12,7 +12,17 @@ const NAV = [
   { href: "/#ubicacion", label: "Ubicación" },
 ];
 
-export function SiteHeader({ name, logoUrl }: { name: string; logoUrl: string }) {
+export function SiteHeader({
+  name,
+  logoUrl,
+  bookingHref,
+  offsetTop = false,
+}: {
+  name: string;
+  logoUrl: string;
+  bookingHref: string;
+  offsetTop?: boolean;
+}) {
   const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
 
@@ -29,7 +39,7 @@ export function SiteHeader({ name, logoUrl }: { name: string; logoUrl: string })
 
   return (
     <header
-      className={`fixed inset-x-0 top-0 z-50 transition-all duration-500 ${
+      className={`fixed inset-x-0 z-50 transition-all duration-500 ${offsetTop ? "top-10" : "top-0"} ${
         scrolled || open
           ? "border-b border-bone-100/8 bg-ink-900/85 backdrop-blur-xl"
           : "border-b border-transparent bg-transparent"
@@ -54,9 +64,9 @@ export function SiteHeader({ name, logoUrl }: { name: string; logoUrl: string })
               {item.label}
             </Link>
           ))}
-          <Link href="/reservar" className="btn-gold !px-5 !py-2.5">
+          <a href={bookingHref} target="_blank" rel="noreferrer" className="btn-gold !px-5 !py-2.5">
             Reservar hora
-          </Link>
+          </a>
         </nav>
 
         <button
@@ -86,9 +96,9 @@ export function SiteHeader({ name, logoUrl }: { name: string; logoUrl: string })
               </li>
             ))}
           </ul>
-          <Link href="/reservar" onClick={() => setOpen(false)} className="btn-gold mt-8 w-full !py-4">
+          <a href={bookingHref} target="_blank" rel="noreferrer" onClick={() => setOpen(false)} className="btn-gold mt-8 w-full !py-4">
             Reservar hora
-          </Link>
+          </a>
         </nav>
       )}
     </header>
