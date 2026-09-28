@@ -1,0 +1,11 @@
+{
+  "nombre": "Masaje de relajación",
+  "precio": 0,
+  "foto": "/img/fotos/servicio-masaje.jpg",
+  "descripcion": "Para desconectarte mientras te atendemos.",
+  "incluye": [],
+  "etiqueta": "",
+  "agotado": false,
+  "visible": true,
+  "orden": 50
+}

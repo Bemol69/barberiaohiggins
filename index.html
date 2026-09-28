@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>%%SEO_TITULO%%</title>
+  <meta name="description" content="%%SEO_DESCRIPCION%%">
+  <meta name="theme-color" content="%%COLOR_FONDO%%">
+  <meta name="color-scheme" content="dark">
+  <link rel="icon" href="img/logo.jpg">
+  <link rel="apple-touch-icon" href="img/logo.jpg">
+  <!-- SEO:HEAD (lo completa scripts/build.mjs: canonical, Open Graph y datos estructurados) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="%%FUENTES_URL%%" rel="stylesheet">
+  <link rel="preload" as="image" href="%%HERO_1%%">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+  <!-- Iconos de línea (estilo Lucide, trazo 1.8) -->
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true">
+    <defs>
+      <symbol id="i-scissors" viewBox="0 0 24 24"><circle cx="6" cy="6" r="3"/><path d="M8.12 8.12 12 12"/><path d="M20 4 8.12 15.88"/><circle cx="6" cy="18" r="3"/><path d="M14.8 14.8 20 20"/></symbol>
+      <symbol id="i-razor" viewBox="0 0 24 24"><path d="M3 21l6.5-6.5"/><path d="M9.5 14.5 19 5a2.12 2.12 0 0 1 3 3l-8.2 8.2a1 1 0 0 1-1.1.2L9.5 14.5Z"/><path d="M12 12l2 2"/></symbol>
+      <symbol id="i-comb" viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="5" rx="1.5"/><path d="M4.5 12v5M7.5 12v6M10.5 12v5M13.5 12v6M16.5 12v5M19.5 12v6"/></symbol>
+      <symbol id="i-clipper" viewBox="0 0 24 24"><path d="M7 2h10v4H7z"/><path d="M8.5 6h7l1.5 3v10a3 3 0 0 1-3 3h-4a3 3 0 0 1-3-3V9z"/><path d="M10 12h4M10 15h4"/></symbol>
+      <symbol id="i-pole" viewBox="0 0 24 24"><path d="M10 2h4v2h-4z"/><rect x="8" y="4" width="8" height="16" rx="1.5"/><path d="M8 9l8-3M8 13.5l8-3M8 18l8-3"/><path d="M10 20v2h4v-2"/></symbol>
+      <symbol id="i-chair" viewBox="0 0 24 24"><path d="M8 3h8a1 1 0 0 1 1 1v7H7V4a1 1 0 0 1 1-1Z"/><path d="M4 11h16v3a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1z"/><path d="M12 15v5M8 21h8"/></symbol>
+      <symbol id="i-smile" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M8 14s1.5 2 4 2 4-2 4-2M9 9h.01M15 9h.01"/></symbol>
+      <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></symbol>
+      <symbol id="i-pin" viewBox="0 0 24 24"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></symbol>
+      <symbol id="i-nav" viewBox="0 0 24 24"><path d="M3 11 22 2l-9 19-2-8z"/></symbol>
+      <symbol id="i-chat" viewBox="0 0 24 24"><path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z"/></symbol>
+      <symbol id="i-wa" viewBox="0 0 24 24"><path d="M17.47 14.38c-.3-.15-1.76-.87-2.03-.97-.27-.1-.47-.15-.67.15-.2.3-.77.97-.94 1.17-.17.2-.35.22-.64.07-.3-.15-1.26-.46-2.4-1.48-.88-.79-1.48-1.76-1.66-2.06-.17-.3-.02-.46.13-.6.13-.13.3-.35.45-.52.15-.17.2-.3.3-.5.1-.2.05-.37-.02-.52-.08-.15-.67-1.62-.92-2.22-.24-.58-.49-.5-.67-.51h-.57c-.2 0-.52.07-.8.37-.27.3-1.04 1.02-1.04 2.48s1.07 2.88 1.21 3.08c.15.2 2.1 3.2 5.08 4.49.71.3 1.26.49 1.7.62.71.23 1.36.2 1.87.12.57-.08 1.76-.72 2-1.41.25-.7.25-1.29.18-1.41-.07-.13-.27-.2-.57-.35M12.05 21.8h-.01a9.87 9.87 0 0 1-5.03-1.38l-.36-.21-3.74.98 1-3.65-.24-.37a9.86 9.86 0 0 1-1.51-5.26c0-5.45 4.44-9.88 9.89-9.88a9.82 9.82 0 0 1 6.99 2.9 9.82 9.82 0 0 1 2.89 6.99c0 5.45-4.44 9.88-9.88 9.88m8.41-18.3A11.81 11.81 0 0 0 12.05 0C5.5 0 .16 5.34.16 11.89c0 2.1.55 4.14 1.59 5.95L.06 24l6.3-1.65a11.88 11.88 0 0 0 5.68 1.45h.01c6.55 0 11.89-5.34 11.89-11.9a11.82 11.82 0 0 0-3.48-8.4Z"/></symbol>
+      <symbol id="i-ig" viewBox="0 0 24 24"><rect width="20" height="20" x="2" y="2" rx="5"/><circle cx="12" cy="12" r="4"/><path d="M17.5 6.5h.01"/></symbol>
+      <symbol id="i-calendar" viewBox="0 0 24 24"><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></symbol>
+      <symbol id="i-user" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></symbol>
+      <symbol id="i-arrow" viewBox="0 0 24 24"><path d="M5 12h14M13 5l7 7-7 7"/></symbol>
+      <symbol id="i-menu" viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h16"/></symbol>
+      <symbol id="i-x" viewBox="0 0 24 24"><path d="M18 6 6 18M6 6l12 12"/></symbol>
+      <symbol id="i-info" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></symbol>
+      <symbol id="i-star" viewBox="0 0 24 24"><path d="m12 2 3.1 6.3 6.9 1-5 4.9 1.2 6.8L12 17.8 5.8 21 7 14.2 2 9.3l6.9-1z"/></symbol>
+      <symbol id="i-walk" viewBox="0 0 24 24"><circle cx="13" cy="4" r="2"/><path d="m9 20 3-6 3 2v5M7 11l3-3 4 1 2 3h3M12 14l-2-4"/></symbol>
+    </defs>
+  </svg>
+
+  <a class="skip" href="#servicios">Saltar al contenido</a>
+
+  <!-- NAV -->
+  <header class="nav" id="top">
+    <div class="pole-band" aria-hidden="true"></div>
+    <div class="container nav__inner">
+      <a href="#top" class="brand" aria-label="%%NOMBRE%%, inicio">
+        <img src="img/logo-emblema.png" alt="">
+        <span class="brand__text"><b>%%MARCA_A%% %%MARCA_B%%</b><small>%%RUBRO%% · %%CIUDAD%%</small></span>
+      </a>
+      <nav class="nav__links" id="navLinks" aria-label="Secciones">
+        <a href="#servicios">Servicios</a>
+        <a href="#nosotros">Nosotros</a>
+        <!-- SI:GALERIA --><a href="#cortes">Cortes</a><!-- /SI:GALERIA -->
+        <a href="#agenda">Cómo agendar</a>
+        <a href="#sucursales">Ubicación</a>
+      </nav>
+      <div class="nav__actions">
+        <!-- SI:INSTAGRAM --><a class="icon-btn" href="https://www.instagram.com/%%INSTAGRAM%%/" target="_blank" rel="noopener" aria-label="Instagram de %%NOMBRE%%">
+          <svg class="ic"><use href="#i-ig"/></svg>
+        </a><!-- /SI:INSTAGRAM -->
+        <button class="btn btn--primary btn--sm nav__cta" data-order>Agendar hora</button>
+        <button class="icon-btn nav__toggle" id="navToggle" aria-label="Abrir menú" aria-expanded="false" aria-controls="navLinks">
+          <svg class="ic"><use href="#i-menu"/></svg>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <!-- HERO -->
+    <section class="hero">
+      <div class="hero__bg" aria-hidden="true"><span>BARBER</span></div>
+      <div class="container hero__inner">
+        <div class="hero__text" data-reveal>
+          <p class="eyebrow"><svg class="ic"><use href="#i-pole"/></svg> %%RUBRO%% profesional · %%CIUDAD%%, Chile</p>
+          <h1>%%HERO_TITULO%% <em>%%HERO_DESTACADO%%</em></h1>
+          <p class="lead">%%HERO_BAJADA%%</p>
+          <div class="hero__cta">
+            <button class="btn btn--primary btn--lg" data-order><svg class="ic"><use href="#i-calendar"/></svg> Agendar mi hora</button>
+            <a href="#servicios" class="btn btn--ghost btn--lg">Ver precios</a>
+          </div>
+          <ul class="hero__facts">
+            <li><svg class="ic"><use href="#i-clock"/></svg><span><b id="heroStatus">Horario</b><small id="heroStatusSub">Lun a vie %%HORA_ABRE%%–%%HORA_CIERRA%%</small></span></li>
+            <li><svg class="ic"><use href="#i-pin"/></svg><span><b>%%DIRECCION%%</b><small>%%ENVIOS%%</small></span></li>
+            <!-- SI:CALIFICACION --><li><svg class="ic"><use href="#i-star"/></svg><span><b>%%CALIFICACION%% de 5 estrellas</b><small>%%RESENAS%% reseñas de clientes</small></span></li><!-- /SI:CALIFICACION -->
+          </ul>
+        </div>
+
+        <div class="hero__visual" data-reveal>
+          <figure class="frame frame--main">
+            <img src="%%HERO_1%%" alt="%%HERO_1_ALT%%" width="1080" height="1350" fetchpriority="high">
+          </figure>
+          <figure class="frame frame--side">
+            <img src="%%HERO_2%%" alt="%%HERO_2_ALT%%" width="720" height="1280">
+          </figure>
+          <div class="pole" aria-hidden="true"><span class="pole__cap"></span><span class="pole__glass"><i></i></span><span class="pole__cap pole__cap--b"></span></div>
+          <div class="seal" aria-hidden="true">
+            <svg viewBox="0 0 200 200">
+              <defs><path id="sealPath" d="M100,100 m-74,0 a74,74 0 1,1 148,0 a74,74 0 1,1 -148,0"/></defs>
+              <text><textPath href="#sealPath" textLength="462" lengthAdjust="spacing">TRADICIÓN ✦ ESTILO ✦ DISTINCIÓN ✦ </textPath></text>
+            </svg>
+            <span class="seal__icon"><svg class="ic"><use href="#i-scissors"/></svg></span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- CINTA DE SERVICIOS -->
+    <div class="ticker" aria-hidden="true">
+      <div class="ticker__track">
+        <span>Corte de cabello</span><svg class="ic"><use href="#i-scissors"/></svg>
+        <span>Corte premium</span><svg class="ic"><use href="#i-razor"/></svg>
+        <span>Perfilado de barba</span><svg class="ic"><use href="#i-scissors"/></svg>
+        <span>Corte + barba</span><svg class="ic"><use href="#i-razor"/></svg>
+        <span>Masaje de relajación</span><svg class="ic"><use href="#i-scissors"/></svg>
+        <span>Clásico &amp; moderno</span><svg class="ic"><use href="#i-razor"/></svg>
+        <span>Corte de cabello</span><svg class="ic"><use href="#i-scissors"/></svg>
+        <span>Corte premium</span><svg class="ic"><use href="#i-razor"/></svg>
+        <span>Perfilado de barba</span><svg class="ic"><use href="#i-scissors"/></svg>
+        <span>Corte + barba</span><svg class="ic"><use href="#i-razor"/></svg>
+        <span>Masaje de relajación</span><svg class="ic"><use href="#i-scissors"/></svg>
+        <span>Clásico &amp; moderno</span><svg class="ic"><use href="#i-razor"/></svg>
+      </div>
+    </div>
+
+    <!-- 01 SERVICIOS (catálogo editable desde /admin) -->
+    <section id="servicios" class="section">
+      <div class="container">
+        <header class="section__head" data-reveal>
+          <p class="kicker"><span>01</span> Tabla de valores</p>
+          <h2>Servicios <em>&amp;</em> precios</h2>
+          <p class="muted">Elige tu servicio y agenda en un minuto por WhatsApp. Los servicios “a consultar” te los cotizamos por el mismo chat.</p>
+        </header>
+        <div class="catalog-bar">
+          <div class="filters" id="filters" role="tablist" aria-label="Categorías de servicios"></div>
+        </div>
+        <div class="toolbar">
+          <span id="count"></span>
+          <label class="sort">
+            <span>Ordenar</span>
+            <select id="sort">
+              <option value="destacados">Recomendados</option>
+              <option value="precio-asc">Menor precio</option>
+              <option value="precio-desc">Mayor precio</option>
+            </select>
+          </label>
+        </div>
+        <div class="grid" id="productGrid"><!-- SEO:PRODUCTOS --></div>
+      </div>
+    </section>
+
+    <!-- 02 NOSOTROS -->
+    <section id="nosotros" class="section section--alt">
+      <div class="container about">
+        <div class="about__media" data-reveal>
+          <figure class="frame frame--tall"><img src="%%HERO_2%%" alt="%%HERO_2_ALT%%" loading="lazy" width="640" height="1136"></figure>
+          <figure class="frame frame--small"><img src="%%HERO_3%%" alt="%%HERO_3_ALT%%" loading="lazy" width="480" height="854"></figure>
+          <!-- SI:CALIFICACION --><div class="about__stamp"><b>%%CALIFICACION%%</b><span>★ en %%RESENAS%%<br>reseñas</span></div><!-- /SI:CALIFICACION -->
+        </div>
+        <div class="about__text" data-reveal>
+          <p class="kicker"><span>02</span> Nuestra esencia</p>
+          <h2>Donde la tradición <em>y el estilo se unen</em></h2>
+          <p class="lead">Barbería O'Higgins es un espacio donde la tradición y el estilo se unen. Inspirados en el carácter del Libertador, buscamos reflejar elegancia, respeto y distinción en cada servicio, con atención cercana y comunicación directa por WhatsApp.</p>
+          <ul class="values">
+            <li>
+              <span class="values__ic"><svg class="ic"><use href="#i-scissors"/></svg></span>
+              <div><h3>Elegancia</h3><p>Cortes clásicos y modernos, con la técnica y el detalle que marcan la diferencia.</p></div>
+            </li>
+            <li>
+              <span class="values__ic"><svg class="ic"><use href="#i-razor"/></svg></span>
+              <div><h3>Respeto</h3><p>Escuchamos lo que buscas y te asesoramos para que salgas conforme con tu estilo.</p></div>
+            </li>
+            <li>
+              <span class="values__ic"><svg class="ic"><use href="#i-chair"/></svg></span>
+              <div><h3>Distinción</h3><p>Un ambiente cálido y profesional, con masajes de relajación para que tu visita sea un buen momento.</p></div>
+            </li>
+          </ul>
+          <!-- SI:BARBEROS_TXT --><div class="kids">
+            <p><svg class="ic"><use href="#i-user"/></svg> <span><b>Nuestro equipo:</b> %%BARBEROS_TXT%%. Elige a tu barbero al agendar o déjanos asignarte al que esté disponible.</span></p>
+          </div><!-- /SI:BARBEROS_TXT -->
+        </div>
+      </div>
+    </section>
+
+    <!-- CORTES (galería editable desde /admin → Ajustes; se oculta si no hay fotos) -->
+    <!-- SI:GALERIA --><section id="cortes" class="section">
+      <div class="container">
+        <header class="section__head section__head--row" data-reveal>
+          <div>
+            <p class="kicker"><span>✦</span> Trabajos reales</p>
+            <h2>Cortes que <em>hablan por ti</em></h2>
+          </div>
+          <!-- SI:INSTAGRAM --><a class="btn btn--ghost" href="https://www.instagram.com/%%INSTAGRAM%%/" target="_blank" rel="noopener"><svg class="ic"><use href="#i-ig"/></svg> Ver más en @%%INSTAGRAM%%</a><!-- /SI:INSTAGRAM -->
+        </header>
+        <div class="gallery" id="gallery"><!-- GALERIA -->
+        </div>
+      </div>
+    </section><!-- /SI:GALERIA -->
+
+    <!-- 04 CÓMO AGENDAR -->
+    <section id="agenda" class="section">
+      <div class="container">
+        <header class="section__head" data-reveal>
+          <p class="kicker"><span>03</span> Simple y rápido</p>
+          <h2>Cómo <em>agendar</em></h2>
+        </header>
+        <ol class="steps">
+          <li class="step" data-reveal>
+            <span class="step__n">01</span>
+            <svg class="ic step__ic"><use href="#i-scissors"/></svg>
+            <h3>Elige tu servicio</h3>
+            <p>Revisa la tabla de valores y escoge corte, barba o el combo que buscas.</p>
+          </li>
+          <li class="step" data-reveal>
+            <span class="step__n">02</span>
+            <svg class="ic step__ic"><use href="#i-calendar"/></svg>
+            <h3>Día y hora</h3>
+            <p>Completa el formulario y se abrirá WhatsApp con tu solicitud lista para enviar.</p>
+          </li>
+          <li class="step" data-reveal>
+            <span class="step__n">03</span>
+            <svg class="ic step__ic"><use href="#i-chat"/></svg>
+            <h3>Te confirmamos</h3>
+            <p>Respondemos por WhatsApp con la hora confirmada o la más cercana disponible.</p>
+          </li>
+          <li class="step" data-reveal>
+            <span class="step__n">04</span>
+            <svg class="ic step__ic"><use href="#i-chair"/></svg>
+            <h3>Llega y relájate</h3>
+            <p>Siéntate en la silla. Del resto nos encargamos nosotros.</p>
+          </li>
+        </ol>
+        <div class="notice" data-reveal>
+          <svg class="ic"><use href="#i-chat"/></svg>
+          <p><strong>¿Tienes dudas?</strong> Escríbenos por WhatsApp y te ayudamos a elegir el servicio y la hora.</p>
+          <button class="btn btn--primary btn--sm" data-order>Agendar ahora</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- 05 SUCURSALES Y HORARIO -->
+    <section id="sucursales" class="section section--alt">
+      <div class="container">
+        <header class="section__head" data-reveal>
+          <p class="kicker"><span>04</span> Encuéntranos</p>
+          <h2>Ubicación <em>&amp;</em> horario</h2>
+        </header>
+        <div class="locations">
+          <div class="locations__list">
+            <article class="branch is-active" data-map="%%SUCURSAL1_QUERY%%" data-reveal>
+              <span class="branch__tag">Nuestro local</span>
+              <h3>%%SUCURSAL1_NOMBRE%%</h3>
+              <p class="branch__addr"><svg class="ic"><use href="#i-pin"/></svg> %%SUCURSAL1_DIRECCION%%, %%CIUDAD%%</p>
+              <p class="muted">%%SUCURSAL1_REFERENCIA%%</p>
+              <div class="branch__actions">
+                <a class="btn btn--ghost btn--sm" href="%%SUCURSAL1_MAPA%%" target="_blank" rel="noopener"><svg class="ic"><use href="#i-nav"/></svg> Cómo llegar</a>
+                <button class="btn btn--primary btn--sm" data-order data-sucursal="0">Agendar hora</button>
+              </div>
+            </article>
+            <!-- SI:SUCURSAL2_DIRECCION --><article class="branch" data-map="%%SUCURSAL2_QUERY%%" data-reveal>
+              <span class="branch__tag branch__tag--blue">Sucursal 2</span>
+              <h3>%%SUCURSAL2_NOMBRE%%</h3>
+              <p class="branch__addr"><svg class="ic"><use href="#i-pin"/></svg> %%SUCURSAL2_DIRECCION%%, %%CIUDAD%%</p>
+              <p class="muted">%%SUCURSAL2_REFERENCIA%%</p>
+              <div class="branch__actions">
+                <a class="btn btn--ghost btn--sm" href="%%SUCURSAL2_MAPA%%" target="_blank" rel="noopener"><svg class="ic"><use href="#i-nav"/></svg> Cómo llegar</a>
+                <button class="btn btn--primary btn--sm" data-order data-sucursal="1">Agendar aquí</button>
+              </div>
+            </article><!-- /SI:SUCURSAL2_DIRECCION -->
+
+            <div class="hours" data-reveal>
+              <div class="hours__head">
+                <h3><svg class="ic"><use href="#i-clock"/></svg> Horario de atención</h3>
+                <em class="status" id="openStatus"></em>
+              </div>
+              <ul class="hours__list" id="hoursList">
+                <li data-day="1"><span>Lunes</span><b>%%HORA_ABRE%% – %%HORA_CIERRA%%</b></li>
+                <li data-day="2"><span>Martes</span><b>%%HORA_ABRE%% – %%HORA_CIERRA%%</b></li>
+                <li data-day="3"><span>Miércoles</span><b>%%HORA_ABRE%% – %%HORA_CIERRA%%</b></li>
+                <li data-day="4"><span>Jueves</span><b>%%HORA_ABRE%% – %%HORA_CIERRA%%</b></li>
+                <li data-day="5"><span>Viernes</span><b>%%HORA_ABRE%% – %%HORA_CIERRA%%</b></li>
+                <li data-day="6"><span>Sábado</span><b>%%HORARIO_SABADO_TXT%%</b></li>
+                <li data-day="0"><span>Domingo</span><b>%%HORARIO_DOMINGO_TXT%%</b></li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="map" data-reveal>
+            <iframe id="mapFrame" title="Mapa de %%NOMBRE%% en %%CIUDAD%%" loading="lazy" referrerpolicy="no-referrer-when-downgrade"
+              src="https://maps.google.com/maps?q=%%SUCURSAL1_QUERY%%&z=16&output=embed"></iframe>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- CTA FINAL -->
+    <section class="cta">
+      <div class="container cta__inner" data-reveal>
+        <img src="img/logo-emblema.png" alt="" class="cta__logo" loading="lazy">
+        <h2>¿Listo para tu <em>próximo corte?</em></h2>
+        <p>Agenda en un minuto y llega directo a la silla.</p>
+        <div class="hero__cta">
+          <button class="btn btn--primary btn--lg" data-order><svg class="ic"><use href="#i-calendar"/></svg> Agendar mi hora</button>
+          <a class="btn btn--ghost btn--lg" id="ctaWa" target="_blank" rel="noopener"><svg class="ic ic--fill"><use href="#i-wa"/></svg> Escribir por WhatsApp</a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="pole-band" aria-hidden="true"></div>
+    <div class="container footer__grid">
+      <div class="footer__brand">
+        <img src="img/logo-emblema.png" alt="Logo %%NOMBRE%%" loading="lazy">
+        <p>%%RUBRO%% profesional en %%CIUDAD%%.<br><b>Tradición · Estilo · Distinción</b></p>
+      </div>
+      <nav class="footer__col" aria-label="Secciones">
+        <h4>Navegación</h4>
+        <a href="#servicios">Servicios y precios</a>
+        <a href="#nosotros">Nosotros</a>
+        <!-- SI:GALERIA --><a href="#cortes">Cortes</a><!-- /SI:GALERIA -->
+        <a href="#sucursales">Ubicación</a>
+      </nav>
+      <div class="footer__col">
+        <h4>Contacto</h4>
+        <a id="footerWa" target="_blank" rel="noopener"><svg class="ic ic--fill"><use href="#i-wa"/></svg> WhatsApp</a>
+        <!-- SI:INSTAGRAM --><a href="https://www.instagram.com/%%INSTAGRAM%%/" target="_blank" rel="noopener"><svg class="ic"><use href="#i-ig"/></svg> @%%INSTAGRAM%%</a><!-- /SI:INSTAGRAM -->
+        <!-- SI:EMAIL --><a href="mailto:%%EMAIL%%">%%EMAIL%%</a><!-- /SI:EMAIL -->
+      </div>
+      <div class="footer__col">
+        <h4>Horario</h4>
+        <p>%%HORARIO_DIAS%%<br><b>%%HORARIO_SEMANA_TXT%%</b></p>
+        <p>Sábado<br><b>%%HORARIO_SABADO_TXT%%</b></p>
+        <p>%%HORARIO_DOMINGO%%<br><b>%%HORARIO_DOMINGO_TXT%%</b></p>
+      </div>
+    </div>
+    <div class="container footer__legal">
+      <span>© <span id="year">2026</span> %%NOMBRE%% · %%CIUDAD%%, %%REGION%%</span>
+      <a href="#top">Volver arriba ↑</a>
+    </div>
+  </footer>
+
+  <!-- Botón flotante de WhatsApp -->
+  <a class="wa-float" id="waFloat" target="_blank" rel="noopener" aria-label="Escribir por WhatsApp">
+    <svg class="ic ic--fill"><use href="#i-wa"/></svg>
+  </a>
+
+  <!-- VISOR DE FOTOS -->
+  <div class="lightbox" id="lightbox" aria-hidden="true">
+    <button class="lightbox__close" data-lb-close aria-label="Cerrar"><svg class="ic"><use href="#i-x"/></svg></button>
+    <figure><img id="lbImg" alt=""><figcaption id="lbCap"></figcaption></figure>
+  </div>
+
+  <!-- MODAL DE RESERVA -->
+  <div class="modal" id="orderModal" aria-hidden="true">
+    <div class="modal__backdrop" data-close></div>
+    <div class="modal__panel" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+      <div class="pole-band" aria-hidden="true"></div>
+      <button class="modal__close" data-close aria-label="Cerrar"><svg class="ic"><use href="#i-x"/></svg></button>
+      <p class="kicker"><span>✂</span> Reserva por WhatsApp</p>
+      <h2 id="modalTitle">Agenda tu <em>hora</em></h2>
+
+      <form id="orderForm" novalidate>
+        <label>Servicio
+          <select id="fServicio"></select>
+        </label>
+
+        <fieldset>
+          <legend>Agregar al servicio <span class="opt">(opcional)</span></legend>
+          <div class="checks" id="fExtras"></div>
+        </fieldset>
+
+        <fieldset>
+          <legend>Sucursal</legend>
+          <div class="radios" id="fSucursal"></div>
+        </fieldset>
+
+        <div class="row">
+          <label>Día
+            <input id="fFecha" type="date" required>
+          </label>
+          <label>Hora
+            <select id="fHora"></select>
+          </label>
+        </div>
+
+        <div class="row">
+          <label class="grow">Tu nombre
+            <input id="fNombre" type="text" autocomplete="given-name" placeholder="Ej: Matías">
+          </label>
+          <label>Barbero <span class="opt">(opcional)</span>
+            <select id="fBarbero"></select>
+          </label>
+        </div>
+
+        <label>Comentario <span class="opt">(opcional)</span>
+          <input id="fComentario" type="text" maxlength="140" placeholder="Ej: corte clásico, mantener el largo arriba">
+        </label>
+
+        <p class="hint" id="fHint"><svg class="ic"><use href="#i-info"/></svg> <span>Te confirmamos la hora por WhatsApp.</span></p>
+
+        <div class="preview">
+          <p class="preview__label">Así llegará tu mensaje</p>
+          <div id="msgPreview"></div>
+        </div>
+
+        <div class="total">
+          <span>Valor referencial</span>
+          <strong id="fTotal">—</strong>
+        </div>
+
+        <p class="form__error" id="formError" hidden></p>
+
+        <button type="submit" class="btn btn--whatsapp btn--block btn--lg"><svg class="ic ic--fill"><use href="#i-wa"/></svg> Enviar solicitud por WhatsApp</button>
+      </form>
+    </div>
+  </div>
+
+  <script src="app.js" charset="utf-8"></script>
+</body>
+</html>

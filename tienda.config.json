@@ -1,0 +1,38 @@
+{
+  "_ayuda": "Datos fijos de la barbería (los define el desarrollador). Los datos de contacto, horario, portada, barberos y galería van en data/ajustes.json, que el cliente edita desde /admin.",
+  "nombre": "Barbería O'Higgins",
+  "marca_a": "Barbería",
+  "marca_b": "O'Higgins",
+  "rubro": "Barbería",
+  "schema_tipo": "BarberShop",
+  "seo_titulo": "Barbería en Rancagua | Barbería O'Higgins · Cortes, barba y masajes",
+  "seo_descripcion": "Barbería O'Higgins, en Alcázar 320, Rancagua. Cortes clásicos y modernos, perfilado de barba y masajes de relajación. Agenda tu hora por WhatsApp.",
+  "github_repo": "Bemol69/barberiaohiggins",
+  "site_url": "https://barberiaohiggins.vercel.app",
+  "google_verificacion": "",
+  "hero": [
+    { "foto": "img/fotos/portada-1.jpg", "alt": "Barbería O'Higgins en Rancagua" },
+    { "foto": "img/fotos/portada-2.jpg", "alt": "Tradición y estilo en Barbería O'Higgins" },
+    { "foto": "img/fotos/portada-3.jpg", "alt": "Barbería O'Higgins, Alcázar 320" }
+  ],
+  "fuentes": {
+    "titulos": "Playfair Display",
+    "texto": "Barlow",
+    "pesos_titulos": "600;700"
+  },
+  "colores": {
+    "fondo": "#0A0D0C",
+    "primario": "#17845A",
+    "primario_oscuro": "#0F6343",
+    "primario_claro": "#0F241B",
+    "secundario": "#2A4FB5",
+    "secundario_claro": "#131A2C",
+    "acento": "#EDE6D8",
+    "acento_claro": "#151A18",
+    "tinta": "#F4EFE5",
+    "tinta_suave": "#A8A395",
+    "extra": "#D4AD5A",
+    "dorado": "#D4AD5A"
+  },
+  "dias_schema": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"]
+}

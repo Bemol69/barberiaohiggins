@@ -1,0 +1,11 @@
+{
+  "nombre": "Corte Premium",
+  "precio": 15990,
+  "foto": "/img/fotos/servicio-premium.jpg",
+  "descripcion": "Nuestro corte con más tiempo y detalle (1 hora).",
+  "incluye": [],
+  "etiqueta": "Premium",
+  "agotado": false,
+  "visible": true,
+  "orden": 20
+}

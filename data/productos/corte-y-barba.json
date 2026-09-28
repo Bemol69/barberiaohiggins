@@ -1,0 +1,11 @@
+{
+  "nombre": "Corte + barba",
+  "precio": 0,
+  "foto": "/img/fotos/servicio-corte-barba.jpg",
+  "descripcion": "Corte de cabello y perfilado de barba en una visita.",
+  "incluye": ["Corte de cabello", "Perfilado de barba"],
+  "etiqueta": "Combo",
+  "agotado": false,
+  "visible": true,
+  "orden": 40
+}

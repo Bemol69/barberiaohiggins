@@ -1,0 +1,225 @@
+# Configuración del panel /admin (Sveltia CMS)
+# Cada cambio que se guarda aquí crea un commit en GitHub.
+# Vercel arma la web (scripts/build.mjs) y la publica en ~30 segundos.
+
+backend:
+  name: github
+  repo: %%GITHUB_REPO%%
+  branch: main
+  commit_messages:
+    create: "Web: crea {{collection}} «{{slug}}»"
+    update: "Web: actualiza {{collection}} «{{slug}}»"
+    delete: "Web: elimina {{collection}} «{{slug}}»"
+    uploadMedia: "Web: sube foto {{path}}"
+    deleteMedia: "Web: elimina foto {{path}}"
+
+site_url: %%SITE_URL%%
+display_url: %%SITE_URL%%
+logo_url: ../img/logo.jpg
+
+media_folder: img/fotos
+public_folder: /img/fotos
+
+# Nombres de archivo sin tildes ni ñ (ej: "Día del Niño" -> dia-del-nino.json)
+slug:
+  encoding: ascii
+  clean_accents: true
+  sanitize_replacement: "-"
+
+# Las fotos del celular se achican y convierten a WebP al subirlas, para que la web cargue rápido
+media_libraries:
+  default:
+    config:
+      transformations:
+        raster_image:
+          format: webp
+          quality: 85
+          width: 1200
+          height: 1200
+
+collections:
+  # ---------- CATEGORÍAS (filtros del catálogo) ----------
+  - name: categorias
+    label: Categorías
+    label_singular: categoría
+    description: "Las pestañas de la tabla de valores (Barbería, Otros…). Abre una para elegir qué servicios aparecen en ella."
+    icon: filter_list
+    folder: data/categorias
+    format: json
+    create: true
+    delete: true
+    identifier_field: nombre
+    slug: "{{nombre}}"
+    summary: "{{nombre}}"
+    sortable_fields:
+      fields: [orden, nombre]
+      default:
+        field: orden
+        direction: ascending
+    fields:
+      - name: nombre
+        label: Nombre del filtro
+        widget: string
+        hint: "Así aparece en la web. Ej: Barbería"
+
+      - name: productos
+        label: Servicios en esta categoría
+        widget: relation
+        collection: productos
+        value_field: "{{slug}}"
+        search_fields: [nombre]
+        display_fields: ["{{nombre}} · ${{precio}}"]
+        multiple: true
+        required: false
+        hint: "Busca y marca los servicios. Un servicio puede estar en varias categorías."
+
+      - name: orden
+        label: Posición
+        widget: number
+        value_type: int
+        default: 100
+        hint: "Los números más bajos aparecen primero en la barra de filtros."
+
+      - name: visible
+        label: Mostrar en la web
+        widget: boolean
+        default: true
+        hint: "Desactívalo para esconder la categoría sin borrarla."
+
+  # ---------- PRODUCTOS ----------
+  - name: productos
+    label: Servicios y precios
+    label_singular: servicio
+    description: "Todos los servicios de la barbería. Para que un servicio aparezca en una pestaña, agrégalo desde Categorías."
+    icon: storefront
+    folder: data/productos
+    format: json
+    create: true
+    delete: true
+    identifier_field: nombre
+    slug: "{{nombre}}"
+    summary: "{{nombre}} · ${{precio}}"
+    thumbnail: foto
+    sortable_fields:
+      fields: [orden, nombre, precio]
+      default:
+        field: orden
+        direction: ascending
+    fields:
+      - name: nombre
+        label: Nombre del servicio
+        widget: string
+
+      - name: precio
+        label: Precio
+        widget: number
+        value_type: int
+        min: 0
+        hint: "Precio DESDE. Solo números, sin puntos ni signo $. Ej: 10000. Pon 0 para mostrar \"A consultar\"."
+
+      - name: foto
+        label: Foto
+        widget: image
+        hint: "Ideal una foto vertical (4:5) del corte o servicio."
+
+      - name: descripcion
+        label: Descripción
+        widget: text
+        required: false
+        hint: "Opcional. Aparece bajo el nombre."
+
+      - name: incluye
+        label: Qué incluye
+        label_singular: ítem
+        widget: list
+        required: false
+        field:
+          name: item
+          label: Ítem
+          widget: string
+        hint: "Opcional. Un ítem por línea. Ej: Corte de cabello, Perfilado de barba."
+
+      - name: etiqueta
+        label: Etiqueta
+        widget: string
+        required: false
+        hint: "Opcional. Aparece sobre la foto. Ej: Combo, Premium, Más pedido."
+
+      - name: orden
+        label: Posición
+        widget: number
+        value_type: int
+        default: 1000
+        hint: "Los números más bajos aparecen primero en el catálogo."
+
+      - name: agotado
+        label: No disponible por ahora
+        widget: boolean
+        default: false
+        hint: "Si está activado, se muestra 'Consultar' en vez de 'Agendar'."
+
+      - name: visible
+        label: Mostrar en la web
+        widget: boolean
+        default: true
+        hint: "Desactívalo para ocultar el servicio sin borrarlo."
+
+  # ---------- AJUSTES (datos de contacto y portada, editables por el cliente) ----------
+  - name: ajustes
+    label: Ajustes de la barbería
+    icon: settings
+    files:
+      - name: ajustes
+        label: Contacto, horario, equipo, galería y portada
+        file: data/ajustes.json
+        format: json
+        fields:
+          - name: whatsapp
+            label: WhatsApp para reservas
+            widget: string
+            pattern: ['^\+?[0-9 ]{10,17}$', "Formato internacional, ej: 56912345678"]
+            hint: "Con código de país y sin +. Ej: 56912345678"
+          - { name: instagram, label: Usuario de Instagram, widget: string, required: false, hint: "Sin @. Déjalo vacío para ocultarlo." }
+          - { name: tiktok, label: Usuario de TikTok, widget: string, required: false, hint: "Sin @. Déjalo vacío para ocultarlo." }
+          - { name: email, label: Correo, widget: string, required: false }
+          - { name: direccion, label: Dirección, widget: string, required: false, hint: "Calle y número (sin la ciudad)." }
+          - { name: ciudad, label: Ciudad, widget: string }
+          - { name: region, label: Región, widget: string, required: false }
+          - { name: envios, label: Texto corto bajo la dirección, widget: string, required: false, hint: "Ej: Centro de Rancagua" }
+          - { name: calificacion, label: Calificación, widget: string, required: false, hint: "Promedio de tus reseñas, ej 4.9. Déjalo vacío para ocultarlo." }
+          - { name: resenas, label: Cantidad de reseñas, widget: number, value_type: int, required: false, hint: "Ej: 101" }
+          - { name: horario_dias, label: Días de semana, widget: string, default: "Lunes a viernes" }
+          - { name: hora_abre, label: Lunes a viernes · abre, widget: string, pattern: ['^\d{2}:\d{2}$', "Formato HH:MM, ej 10:00"] }
+          - { name: hora_cierra, label: Lunes a viernes · cierra, widget: string, pattern: ['^\d{2}:\d{2}$', "Formato HH:MM, ej 20:00"] }
+          - { name: hora_abre_sabado, label: Sábado · abre, widget: string, required: false, hint: "Vacío = mismo horario de lunes a viernes." }
+          - { name: hora_cierra_sabado, label: Sábado · cierra, widget: string, required: false }
+          - { name: horario_domingo, label: Nombre del día domingo, widget: string, default: "Domingo" }
+          - { name: hora_abre_domingo, label: Domingo · abre, widget: string, required: false, hint: "Déjalo vacío si el domingo está cerrado." }
+          - { name: hora_cierra_domingo, label: Domingo · cierra, widget: string, required: false }
+          - name: barberos
+            label: Barberos
+            label_singular: barbero
+            widget: list
+            required: false
+            field: { name: nombre, label: Nombre, widget: string }
+            hint: "Aparecen en 'Nuestro equipo' y en el formulario de reserva."
+          - name: galeria
+            label: Galería de cortes
+            label_singular: foto
+            widget: list
+            required: false
+            hint: "Fotos de trabajos reales. La sección 'Cortes' aparece en la web cuando hay al menos una."
+            fields:
+              - { name: foto, label: Foto, widget: image }
+              - { name: texto, label: Descripción, widget: string, required: false, hint: "Ej: Corte clásico con barba" }
+          - { name: sucursal1_nombre, label: Local · nombre, widget: string }
+          - { name: sucursal1_direccion, label: Local · dirección, widget: string, hint: "Calle y número, sin la ciudad." }
+          - { name: sucursal1_referencia, label: Local · referencia, widget: string, required: false, hint: "Ej: Centro de Rancagua" }
+          - { name: sucursal1_mapa, label: Local · link de Google Maps, widget: string, required: false }
+          - { name: sucursal2_nombre, label: Sucursal 2 · nombre, widget: string, required: false }
+          - { name: sucursal2_direccion, label: Sucursal 2 · dirección, widget: string, required: false, hint: "Solo si abren una segunda sucursal. Vacía = no se muestra." }
+          - { name: sucursal2_referencia, label: Sucursal 2 · referencia, widget: string, required: false }
+          - { name: sucursal2_mapa, label: Sucursal 2 · link de Google Maps, widget: string, required: false }
+          - { name: hero_titulo, label: Título de la portada, widget: string }
+          - { name: hero_destacado, label: Parte destacada del título, widget: string, required: false, hint: "Aparece en cursiva y color al final del título." }
+          - { name: hero_bajada, label: Texto bajo el título, widget: text }
