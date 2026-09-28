@@ -1,0 +1,183 @@
+@import "tailwindcss";
+
+/*
+ * Sistema de color — derivado del escudo de Barbería O'Higgins:
+ * negro profundo, verde esmeralda del medallón, dorado de la orla,
+ * hueso cálido para lectura y azul/rojo del poste de barbero como acento.
+ */
+@theme {
+  --color-ink-950: #070908;
+  --color-ink-900: #0b0e0d;
+  --color-ink-850: #0f1412;
+  --color-ink-800: #141b18;
+  --color-ink-700: #1c2622;
+  --color-ink-600: #2a3631;
+  --color-ink-500: #4a5751;
+
+  --color-bone-50: #fbf8f2;
+  --color-bone-100: #f4efe5;
+  --color-bone-200: #e8e0d0;
+  --color-bone-300: #d3c8b3;
+  --color-bone-400: #a99f8c;
+  --color-bone-500: #7d7566;
+
+  --color-gold-200: #f0dcaa;
+  --color-gold-300: #e3c57c;
+  --color-gold-400: #d4ad5a;
+  --color-gold-500: #c49a3f;
+  --color-gold-600: #a07c2c;
+  --color-gold-700: #7a5d1f;
+
+  --color-emerald-950: #04160f;
+  --color-emerald-900: #072519;
+  --color-emerald-800: #0b3a27;
+  --color-emerald-700: #0f5138;
+  --color-emerald-600: #14694a;
+  --color-emerald-500: #1c8660;
+  --color-emerald-400: #3fa87f;
+
+  --color-royal-700: #1a3478;
+  --color-royal-600: #22449b;
+  --color-royal-500: #2f5bc4;
+
+  --color-crimson-700: #8e1d17;
+  --color-crimson-600: #b3261e;
+  --color-crimson-500: #d13a2f;
+
+  --font-display: var(--font-fraunces), ui-serif, Georgia, serif;
+  --font-sans: var(--font-manrope), ui-sans-serif, system-ui, sans-serif;
+
+  --animate-marquee: marquee 40s linear infinite;
+  --animate-fade-up: fade-up 0.8s cubic-bezier(0.22, 1, 0.36, 1) both;
+
+  @keyframes marquee {
+    from { transform: translateX(0); }
+    to { transform: translateX(-50%); }
+  }
+  @keyframes fade-up {
+    from { opacity: 0; transform: translateY(16px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+}
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    -webkit-tap-highlight-color: transparent;
+  }
+  body {
+    @apply bg-ink-900 text-bone-100 font-sans antialiased;
+    font-feature-settings: "ss01", "cv11";
+  }
+  ::selection {
+    @apply bg-gold-400 text-ink-900;
+  }
+  :focus-visible {
+    @apply outline-2 outline-offset-2 outline-gold-400;
+  }
+}
+
+@layer components {
+  /* Franja del poste de barbero */
+  .pole-stripe {
+    background: repeating-linear-gradient(
+      -45deg,
+      var(--color-crimson-600) 0 10px,
+      var(--color-bone-50) 10px 20px,
+      var(--color-royal-600) 20px 30px,
+      var(--color-bone-50) 30px 40px
+    );
+  }
+  .grain {
+    position: relative;
+    isolation: isolate;
+  }
+  .grain::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+    opacity: 0.07;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+  .gold-text {
+    background: linear-gradient(100deg, var(--color-gold-200), var(--color-gold-400) 45%, var(--color-gold-600));
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+
+/* ───────── Panel de administración (tema claro) ───────── */
+
+/* Utilidades reutilizables (componibles con @apply y modificadores como !px-5) */
+@utility eyebrow {
+  @apply font-sans text-[0.7rem] font-semibold uppercase tracking-[0.32em];
+}
+
+@utility btn {
+  @apply inline-flex items-center justify-center gap-2 rounded-full px-6 py-3 text-sm font-semibold tracking-wide transition duration-300 disabled:cursor-not-allowed disabled:opacity-50;
+}
+
+@utility btn-gold {
+  @apply btn bg-gold-400 text-ink-900 shadow-[0_10px_30px_-10px_rgba(212,173,90,0.6)] hover:bg-gold-300 hover:shadow-[0_14px_40px_-10px_rgba(212,173,90,0.75)];
+}
+
+@utility btn-ghost {
+  @apply btn border border-bone-100/20 text-bone-100 hover:border-gold-400/70 hover:text-gold-300;
+}
+
+@utility btn-dark {
+  @apply btn bg-ink-900 text-bone-50 hover:bg-emerald-800;
+}
+
+@utility field {
+  @apply w-full rounded-xl border border-bone-100/12 bg-ink-900/70 px-4 py-3.5 text-bone-50 placeholder:text-bone-500 transition focus:border-gold-400 focus:outline-none focus:ring-4 focus:ring-gold-400/15;
+}
+
+@utility card {
+  @apply rounded-2xl bg-bone-50 shadow-[0_1px_2px_rgba(11,14,13,0.04),0_8px_24px_-16px_rgba(11,14,13,0.12)] ring-1 ring-ink-900/6;
+}
+
+@utility ainput {
+  @apply w-full rounded-xl border border-ink-900/12 bg-white px-3.5 py-2.5 text-sm text-ink-900 placeholder:text-ink-500/60 transition focus:border-emerald-600 focus:outline-none focus:ring-4 focus:ring-emerald-500/12;
+}
+
+@utility alabel {
+  @apply mb-1.5 block text-[0.7rem] font-semibold uppercase tracking-wider text-ink-500;
+}
+
+@utility abtn {
+  @apply inline-flex items-center justify-center gap-2 rounded-xl px-4 py-2.5 text-sm font-semibold transition disabled:cursor-not-allowed disabled:opacity-50;
+}
+
+@utility abtn-primary {
+  @apply abtn bg-ink-900 text-bone-50 hover:bg-emerald-800;
+}
+
+@utility abtn-secondary {
+  @apply abtn bg-white text-ink-800 ring-1 ring-ink-900/12 hover:bg-bone-100;
+}
+
+@utility abtn-danger {
+  @apply abtn text-crimson-600 hover:bg-crimson-500/8;
+}
+
+@utility page-title {
+  @apply font-display text-4xl font-medium tracking-tight text-ink-900;
+}
+
+@utility admin {
+  @apply bg-bone-100 text-ink-900;
+}
