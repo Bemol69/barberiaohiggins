@@ -63,6 +63,8 @@ const B = {
   whatsapp,
   telefono: str(ajustes.telefono) || `+${whatsapp}`,
   email: str(ajustes.email),
+  agenda: str(ajustes.agenda_url),
+  agendaSucursal: str(ajustes.agendapro_sucursal).replace(/\D/g, ''),
   instagram: str(ajustes.instagram).replace(/^@/, ''),
   tiktok: str(ajustes.tiktok).replace(/^@/, ''),
   facebook: str(ajustes.facebook),
@@ -130,7 +132,7 @@ const servicios = readFolder('servicios')
   .map((s) => {
     const barberos = [...new Set(Array.isArray(s.barberos) ? s.barberos : [])].filter((id) => equipoIds.has(id));
     return {
-      id: s.id, nombre: str(s.nombre),
+      id: s.id, nombre: str(s.nombre), agendapro: str(s.agendapro_id).replace(/\D/g, ''),
       categoria: catIds.has(str(s.categoria)) ? str(s.categoria) : 'otros',
       precio: Math.max(0, Math.round(num(s.precio, 0))), duracion: Math.max(0, Math.round(num(s.duracion, 0))),
       descripcion: str(s.descripcion), nota: str(s.nota), etiqueta: str(s.etiqueta),
@@ -252,9 +254,11 @@ const BLOQUES = {
 // Datos para el navegador (app.js): reserva, horario y visor de fotos
 const WEB_DATA = {
   nombre: B.nombre, whatsapp: B.whatsapp,
+  // Agenda online (AgendaPro): link para confirmar y sucursal para consultar horas disponibles en vivo
+  agenda: B.agenda, sucursal: B.agendaSucursal,
   horario: Object.fromEntries(horario.map((d) => [d.js, d.abre ? [d.abre, d.cierra] : null])),
   categorias: grupoServicios.map((c) => ({ id: c.id, n: c.nombre })),
-  servicios: servicios.map((s) => ({ id: s.id, n: s.nombre, p: s.precio, d: s.duracion, b: s.barberos, c: s.categoria })),
+  servicios: servicios.map((s) => ({ id: s.id, n: s.nombre, p: s.precio, d: s.duracion, b: s.barberos, c: s.categoria, ap: s.agendapro })),
   equipo: equipo.map((e) => ({ id: e.id, n: e.nombre })),
   galeria,
 };
@@ -270,7 +274,7 @@ const VARS = {
   TELEFONO: B.telefono, TEL_HREF: `tel:+${B.whatsapp}`, EMAIL: B.email,
   INSTAGRAM: B.instagram, INSTAGRAM_URL: B.instagram ? `https://www.instagram.com/${B.instagram}/` : '',
   TIKTOK_URL: B.tiktok ? `https://www.tiktok.com/@${B.tiktok}` : '', FACEBOOK_URL: B.facebook,
-  RESERVA_URL,
+  RESERVA_URL, AGENDA_URL: B.agenda,
   DIRECCION: B.direccion, CIUDAD: B.ciudad, REGION: B.region, REFERENCIA: B.referencia, DIRECCION_COMPLETA: direccionCompleta,
   MAPA_URL, MAPA_EMBED, WAZE_URL,
   CALIFICACION: B.calificacion && B.resenas ? B.calificacion.replace('.', ',') : '', RESENAS: B.resenas ? String(B.resenas) : '',

@@ -112,6 +112,11 @@ collections:
         widget: string
         required: false
         hint: "Opcional. Sale destacada junto al nombre. Ej: Promo 40%"
+      - name: agendapro_id
+        label: Código en AgendaPro
+        widget: string
+        required: false
+        hint: "Para mostrar las horas disponibles en vivo. No lo cambies si no sabes cuál es; vacío = se muestran las horas según el horario."
       - name: barberos
         label: Barberos que lo hacen
         widget: relation
@@ -260,6 +265,8 @@ collections:
             hint: "Con código de país y sin +. Ej: 56912345678. Aquí llegan todas las reservas y consultas de la web."
           - { name: telefono, label: Teléfono como se muestra, widget: string, hint: "Ej: +56 9 6161 9679" }
           - { name: email, label: Correo, widget: string, required: false }
+          - { name: agenda_url, label: Link de la agenda online, widget: string, required: false, hint: "Tu página de AgendaPro. Aparece como «Confirmar en la agenda online» al reservar. Vacío = solo WhatsApp." }
+          - { name: agendapro_sucursal, label: Código de sucursal en AgendaPro, widget: string, required: false, hint: "Para leer las horas disponibles en vivo (ej 411379). Vacío = se usan las horas del horario." }
           - { name: instagram, label: Usuario de Instagram, widget: string, required: false, hint: "Sin @. Vacío = no se muestra." }
           - { name: tiktok, label: Usuario de TikTok, widget: string, required: false, hint: "Sin @. Vacío = no se muestra." }
           - { name: facebook, label: Link de Facebook, widget: string, required: false }

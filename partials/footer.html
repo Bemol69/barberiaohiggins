@@ -61,30 +61,28 @@
     <a href="%%TEL_HREF%%" aria-label="Llamar"><svg class="ic" aria-hidden="true"><use href="#i-telefono"/></svg></a>
   </div>
 
-  <!-- VENTANA DE RESERVA: arma la solicitud y la envía por WhatsApp -->
+  <!-- VENTANA DE RESERVA: horas disponibles en vivo (agenda online) y confirmación en la agenda o por WhatsApp -->
   <div class="modal" id="modal" aria-hidden="true">
     <div class="modal__backdrop" data-close></div>
     <div class="modal__panel" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
       <button class="modal__close" type="button" data-close aria-label="Cerrar"><svg class="ic" aria-hidden="true"><use href="#i-cerrar"/></svg></button>
       <p class="kicker">Reserva tu hora</p>
       <h2 id="modalTitle">Agenda en <em>%%NOMBRE%%</em></h2>
-      <p class="modal__lead">Elige servicio, día y hora. Se abrirá WhatsApp con tu solicitud lista y te confirmamos por el mismo chat.</p>
 
       <label class="field">Servicio
         <select id="fServicio"></select>
       </label>
       <div class="modal__svc" id="svcInfo" hidden></div>
 
+      <div class="pick">
+        <p class="pick__label">Día</p>
+        <div class="days" id="fDias" role="listbox" aria-label="Día"></div>
+        <p class="pick__label">Hora <span class="live" id="liveTag" hidden><i></i> Disponibilidad en vivo</span></p>
+        <div class="slots" id="fHoras" role="listbox" aria-label="Hora"></div>
+        <p class="pick__msg" id="slotsMsg" hidden></p>
+      </div>
 
       <form class="wa-form" id="waForm" novalidate>
-        <div class="row">
-          <label class="field">Día
-            <input id="fFecha" type="date" required>
-          </label>
-          <label class="field">Hora aprox.
-            <select id="fHora"></select>
-          </label>
-        </div>
         <div class="row">
           <label class="field">Barbero
             <select id="fBarbero"></select>
@@ -93,9 +91,13 @@
             <input id="fNombre" type="text" autocomplete="given-name" placeholder="Ej: Matías" maxlength="40">
           </label>
         </div>
+        <div class="resumen" id="resumen" hidden></div>
         <p class="form-error" id="waError" hidden></p>
-        <button class="btn btn--wa btn--block" type="submit"><svg class="ic ic--fill" aria-hidden="true"><use href="#i-whatsapp"/></svg> Enviar solicitud por WhatsApp</button>
-        <p class="hint"><svg class="ic" aria-hidden="true"><use href="#i-info"/></svg> La hora queda reservada cuando te la confirmamos.</p>
+        <div class="modal__actions">
+          <!-- SI:AGENDA_URL --><a class="btn btn--gold btn--block" id="goAgenda" href="%%AGENDA_URL%%" target="_blank" rel="noopener"><svg class="ic" aria-hidden="true"><use href="#i-calendario"/></svg> Confirmar en la agenda online</a><!-- /SI:AGENDA_URL -->
+          <button class="btn btn--wa btn--block" type="submit"><svg class="ic ic--fill" aria-hidden="true"><use href="#i-whatsapp"/></svg> Pedir por WhatsApp</button>
+        </div>
+        <p class="hint" id="agendaHint"><svg class="ic" aria-hidden="true"><use href="#i-info"/></svg> <span>Elige una hora para continuar.</span></p>
       </form>
     </div>
   </div>

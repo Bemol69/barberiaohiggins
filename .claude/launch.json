@@ -3,8 +3,10 @@
   "configurations": [
     {
       "name": "tienda",
-      "runtimeExecutable": "python",
-      "runtimeArgs": ["-m", "http.server", "5600", "--directory", "dist"],
+      "runtimeExecutable": "node",
+      "runtimeArgs": [
+        "scripts/dev.mjs"
+      ],
       "port": 5600
     }
   ]

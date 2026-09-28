@@ -1,6 +1,6 @@
 # Barbería O'Higgins · web y panel
 
-Sitio estático de Barbería O'Higgins (Alcázar 320, Rancagua) con panel `/admin` para que el dueño edite todo sin programar. Las reservas y consultas llegan por WhatsApp.
+Sitio estático de Barbería O'Higgins (Alcázar 320, Rancagua) con panel `/admin` para que el dueño edite todo sin programar. Las horas disponibles se leen en vivo desde su agenda online (AgendaPro) y la reserva se confirma allá o por WhatsApp.
 
 ## Cómo funciona
 
@@ -18,11 +18,14 @@ Sitio estático de Barbería O'Higgins (Alcázar 320, Rancagua) con panel `/admi
 
 `scripts/build.mjs` arma `dist/` con los datos: escribe servicios, equipo, galería y reseñas dentro del HTML (para Google), más canonical, Open Graph, datos estructurados, `robots.txt` y `sitemap.xml`. Vercel lo ejecuta en cada cambio (`vercel.json`).
 
+## Horas disponibles en vivo
+
+`api/agenda.js` (función de Vercel) consulta a AgendaPro los días y horas libres de cada servicio y devuelve solo eso. Cada servicio necesita su `agendapro_id` y `data/ajustes.json` el `agendapro_sucursal`. Es la misma consulta pública que usa su página de reservas (no es una API oficial): si deja de responder, la web muestra las horas según el horario del local.
+
 ## Probar en local
 
 ```bash
-node scripts/build.mjs
-python -m http.server 5600 --directory dist
+npm run dev   # arma dist/ y levanta http://localhost:5600 con /api/agenda
 ```
 
 ## Panel /admin

@@ -106,11 +106,132 @@ $('.tabs')?.addEventListener('click', (e) => { const t = e.target.closest('.tab'
 document.addEventListener('click', (e) => { const a = e.target.closest('[data-tab]'); if (a && menus) setTab(a.dataset.tab); });
 
 // ===== Ventana de reserva =====
+// Días y horas: si el servicio tiene código de AgendaPro, se leen en vivo desde la agenda online
+// (las mismas horas libres que se ven allá). Si no hay código o la agenda no responde,
+// se ofrecen las horas según el horario del local.
 const modal = $('#modal');
-const fServicio = $('#fServicio'), fFecha = $('#fFecha'), fHora = $('#fHora'), fBarbero = $('#fBarbero'), fNombre = $('#fNombre');
+const fServicio = $('#fServicio'), fBarbero = $('#fBarbero'), fNombre = $('#fNombre');
+const fDias = $('#fDias'), fHoras = $('#fHoras'), slotsMsg = $('#slotsMsg'), liveTag = $('#liveTag');
+const goAgenda = $('#goAgenda'), agendaHint = $('#agendaHint'), resumen = $('#resumen');
 const SERV = DATA.servicios || [];
 const EQUIPO = DATA.equipo || [];
 const findServ = (id) => SERV.find((s) => s.id === id);
+const AP = 'https://agendapro.com/api_views/workflow/v2/service_providers';
+const DIAS_VISTA = 14;
+const sel = { fecha: '', hora: '', barberoAgenda: '' };
+const cache = new Map();
+let pedido = 0; // evita que una respuesta lenta pise a una más nueva
+
+// Primero pregunta a la función de la web (/api/agenda); si no está disponible, directo a la agenda
+async function consultar(tipo, servicio, desde, hasta = desde) {
+  const q = { tipo, sucursal: DATA.sucursal, servicio, desde, hasta };
+  const key = JSON.stringify(q);
+  if (cache.has(key)) return cache.get(key);
+  const pedir = async (url, adaptar) => {
+    const ctrl = new AbortController();
+    const t = setTimeout(() => ctrl.abort(), 8000);
+    try {
+      const r = await fetch(url, { signal: ctrl.signal });
+      if (!r.ok) throw new Error(`HTTP ${r.status}`);
+      return adaptar(await r.json());
+    } finally { clearTimeout(t); }
+  };
+  let out;
+  try {
+    out = await pedir(`/api/agenda?${new URLSearchParams(q)}`, (d) => d);
+  } catch (e) {
+    const params = new URLSearchParams({ local: DATA.sucursal, providers: '{}', providers_array: '[]', bundled: 0, bundle_id: 0, start_date: desde, end_date: hasta, services: JSON.stringify([servicio]), ...(tipo === 'horas' ? { dates_and_providers: '[]' } : {}) });
+    out = await pedir(`${AP}/${tipo === 'dias' ? 'available_days_sql_improved' : 'available_hours_sql_improved'}?${params}`, (d) => {
+      if (tipo === 'dias') return { dias: (Array.isArray(d) ? d : []).map((x) => ({ fecha: x.date, disponible: !!x.available })) };
+      const vistas = new Set();
+      return { horas: ['morning_hours', 'afternoon_hours', 'evening_hours', 'night_hours'].flatMap((k) => d[k] || [])
+        .filter((h) => h.status === 'hora-disponible' && h.start_block && !vistas.has(h.start_block) && vistas.add(h.start_block))
+        .map((h) => ({ hora: h.start_block, barbero: h.available_provider || '' })) };
+    });
+  }
+  cache.set(key, out);
+  return out;
+}
+const enVivo = (s) => !!(DATA.sucursal && s && s.ap);
+const fechaCorta = (iso) => { const d = new Date(iso + 'T12:00:00'); return { dia: DIAS[d.getDay()].slice(0, 3), num: d.getDate(), mes: d.toLocaleDateString('es-CL', { month: 'short' }).replace('.', '') }; };
+const mostrarMsg = (t) => { slotsMsg.textContent = t; slotsMsg.hidden = !t; };
+
+// Horas según el horario del local (respaldo)
+function horasHorario(iso, dur) {
+  const h = horarioDe(dayOfIso(iso));
+  if (!h) return [];
+  const now = chileNow();
+  const [abre, cierra] = h.map(toMin);
+  const desde = iso === now.iso ? Math.max(abre, Math.ceil((now.min + 30) / 30) * 30) : abre;
+  const out = [];
+  for (let m = desde; m <= cierra - dur; m += 30) out.push({ hora: fmtMin(m) });
+  return out;
+}
+
+async function cargarDias() {
+  const n = ++pedido;
+  const s = findServ(fServicio.value);
+  const hoy = chileNow().iso;
+  let dias = Array.from({ length: DIAS_VISTA }, (_, i) => addDays(hoy, i)).map((iso) => ({ iso, ok: !!horarioDe(dayOfIso(iso)) }));
+  let vivo = false;
+  if (enVivo(s)) {
+    fDias.innerHTML = '<p class="pick__loading">Buscando días disponibles…</p>';
+    fHoras.innerHTML = '';
+    try {
+      const r = await consultar('dias', s.ap, hoy, addDays(hoy, DIAS_VISTA - 1));
+      if (r.dias && r.dias.length) { dias = r.dias.map((d) => ({ iso: d.fecha, ok: d.disponible })); vivo = true; }
+    } catch (e) { /* sin conexión con la agenda: se usa el horario */ }
+  }
+  if (n !== pedido) return;
+  liveTag.hidden = !vivo;
+  fDias.innerHTML = dias.map((d) => { const f = fechaCorta(d.iso); return `<button type="button" class="day" data-dia="${d.iso}" ${d.ok ? '' : 'disabled'} aria-selected="false"><small>${f.dia}</small><b>${f.num}</b><small>${f.mes}</small></button>`; }).join('');
+  const elegir = dias.find((d) => d.ok && d.iso === sel.fecha) || dias.find((d) => d.ok);
+  if (elegir) await elegirDia(elegir.iso, vivo);
+  else { fHoras.innerHTML = ''; mostrarMsg('No hay días disponibles en las próximas dos semanas. Escríbenos por WhatsApp.'); }
+}
+
+async function elegirDia(iso, vivo = !liveTag.hidden) {
+  const n = ++pedido;
+  sel.fecha = iso; sel.hora = ''; sel.barberoAgenda = '';
+  $$('.day', fDias).forEach((b) => { const on = b.dataset.dia === iso; b.classList.toggle('is-active', on); b.setAttribute('aria-selected', String(on)); });
+  const s = findServ(fServicio.value);
+  let horas = null;
+  mostrarMsg('');
+  if (vivo && enVivo(s)) {
+    fHoras.innerHTML = '<p class="pick__loading">Buscando horas disponibles…</p>';
+    try {
+      horas = (await consultar('horas', s.ap, iso)).horas || null;
+    } catch (e) { horas = null; }
+  }
+  if (n !== pedido) return;
+  if (!horas) horas = horasHorario(iso, Math.max(30, (s && s.d) || 30));
+  fHoras.innerHTML = horas.map((h) => `<button type="button" class="slot" data-hora="${h.hora}" data-barbero="${esc(h.barbero || '')}" aria-selected="false"><b>${h.hora}</b>${h.barbero ? `<small>${esc(h.barbero)}</small>` : ''}</button>`).join('');
+  if (!horas.length) mostrarMsg('No quedan horas ese día. Prueba con otro.');
+  actualizarResumen();
+}
+
+function elegirHora(btn) {
+  sel.hora = btn.dataset.hora; sel.barberoAgenda = btn.dataset.barbero || '';
+  $$('.slot', fHoras).forEach((b) => { const on = b === btn; b.classList.toggle('is-active', on); b.setAttribute('aria-selected', String(on)); });
+  actualizarResumen();
+}
+
+function actualizarResumen() {
+  const s = findServ(fServicio.value);
+  $('#waError').hidden = true;
+  if (!sel.fecha || !sel.hora) {
+    resumen.hidden = true;
+    agendaHint.querySelector('span').textContent = 'Elige un día y una hora para continuar.';
+    return;
+  }
+  const d = new Date(sel.fecha + 'T12:00:00');
+  const fecha = `${DIAS[d.getDay()]} ${d.getDate()} de ${d.toLocaleDateString('es-CL', { month: 'long' })}`;
+  resumen.innerHTML = `<b>${esc(s ? s.n : 'Asesoría')}</b> · ${fecha}, ${sel.hora} hrs${sel.barberoAgenda ? ` · disponible con ${esc(sel.barberoAgenda)}` : ''}`;
+  resumen.hidden = false;
+  agendaHint.querySelector('span').textContent = goAgenda && s && s.ap
+    ? `En la agenda online elige «${s.n}» y la hora ${sel.hora} del ${fecha}: la reserva queda confirmada al instante.`
+    : 'Te confirmamos la hora por WhatsApp.';
+}
 
 if (fServicio) {
   const cats = DATA.categorias || [];
@@ -132,34 +253,13 @@ function renderInfo() {
   box.innerHTML = `<span><b>${s.p ? clp(s.p) : 'A consultar'}</b></span><span>${duracionTxt(s.d)}</span><span>${esc(con)}</span>`;
   box.hidden = false;
 }
-// Horas del día elegido según el horario de ese día (si es hoy, solo las que faltan)
-function renderHoras() {
-  const prev = fHora.value;
-  const now = chileNow();
-  if (!fFecha.value) { fHora.innerHTML = '<option value="">Elige un día</option>'; return; }
-  const h = horarioDe(dayOfIso(fFecha.value));
-  if (!h) { fHora.innerHTML = '<option value="">Cerrado ese día</option>'; return; }
-  const s = findServ(fServicio.value);
-  const dur = Math.max(30, (s && s.d) || 30);
-  const [abre, cierra] = h.map(toMin);
-  const desde = fFecha.value === now.iso ? Math.max(abre, Math.ceil((now.min + 30) / 30) * 30) : abre;
-  const slots = [];
-  for (let m = desde; m <= cierra - dur; m += 30) slots.push(fmtMin(m));
-  fHora.innerHTML = slots.length
-    ? '<option value="">Elige una hora</option>' + slots.map((t) => `<option${t === prev ? ' selected' : ''}>${t}</option>`).join('')
-    : '<option value="">No quedan horas ese día</option>';
-}
 function openModal(servId, barberoId) {
   if (!modal) return false;
   fServicio.value = servId && findServ(servId) ? servId : '';
   renderBarberos(); renderInfo();
   if (barberoId && [...fBarbero.options].some((o) => o.value === barberoId)) fBarbero.value = barberoId;
-  const now = chileNow();
-  fFecha.min = now.iso;
-  if (!fFecha.value || fFecha.value < now.iso) fFecha.value = now.iso;
-  renderHoras();
-  // Si hoy ya no quedan horas, propone el siguiente día con atención
-  for (let i = 1; i <= 7 && fHora.options.length < 2; i++) { fFecha.value = addDays(now.iso, i); renderHoras(); }
+  sel.fecha = ''; sel.hora = '';
+  cargarDias();
   $('#waError').hidden = true;
   modal.classList.add('is-open');
   modal.setAttribute('aria-hidden', 'false');
@@ -178,27 +278,30 @@ document.addEventListener('click', (e) => {
   if (btn) { if (openModal(btn.dataset.reservar, btn.dataset.barbero)) { e.preventDefault(); setMenu(false); } return; }
   if (e.target.closest('[data-close]')) closeModal();
 });
-fServicio?.addEventListener('change', () => { renderBarberos(); renderInfo(); renderHoras(); });
-fFecha?.addEventListener('change', renderHoras);
+fDias?.addEventListener('click', (e) => { const b = e.target.closest('.day'); if (b && !b.disabled) elegirDia(b.dataset.dia); });
+fHoras?.addEventListener('click', (e) => { const b = e.target.closest('.slot'); if (b) elegirHora(b); });
+fServicio?.addEventListener('change', () => { renderBarberos(); renderInfo(); cargarDias(); });
+goAgenda?.addEventListener('click', (e) => {
+  if (!sel.hora) { e.preventDefault(); const err = $('#waError'); err.textContent = 'Elige un día y una hora primero.'; err.hidden = false; }
+});
 
 $('#waForm')?.addEventListener('submit', (e) => {
   e.preventDefault();
   const falta = [];
-  if (!fFecha.value) falta.push('el día');
-  if (!fHora.value) falta.push('la hora');
+  if (!sel.fecha || !sel.hora) falta.push('el día y la hora');
   if (!fNombre.value.trim()) falta.push('tu nombre');
   const err = $('#waError');
-  if (falta.length) { err.textContent = `Falta completar ${falta.join(', ').replace(/, ([^,]*)$/, ' y $1')}.`; err.hidden = false; return; }
+  if (falta.length) { err.textContent = `Falta completar ${falta.join(' y ')}.`; err.hidden = false; return; }
   err.hidden = true;
   const s = findServ(fServicio.value);
   const b = EQUIPO.find((x) => x.id === fBarbero.value);
   const L = [`¡Hola ${DATA.nombre}! 💈 Quiero pedir una hora:`, ''];
   L.push(`✂️ *Servicio:* ${s ? `${s.n}${s.p ? ` (${clp(s.p)} · ${duracionTxt(s.d)})` : ''}` : 'Aún no lo sé, quiero asesoría'}`);
-  L.push(`📅 *Día:* ${DIAS[dayOfIso(fFecha.value)]} ${fFecha.value.split('-').reverse().slice(0, 2).join('/')}`);
-  L.push(`🕒 *Hora:* ${fHora.value} aprox.`);
-  L.push(`💈 *Barbero:* ${b ? b.n : 'El primero disponible'}`);
+  L.push(`📅 *Día:* ${DIAS[dayOfIso(sel.fecha)]} ${sel.fecha.split('-').reverse().slice(0, 2).join('/')}`);
+  L.push(`🕒 *Hora:* ${sel.hora} hrs${liveTag.hidden ? ' aprox.' : ''}`);
+  L.push(`💈 *Barbero:* ${b ? b.n : sel.barberoAgenda ? `${sel.barberoAgenda} (aparece disponible)` : 'El primero disponible'}`);
   L.push(`🙋‍♂️ *Nombre:* ${fNombre.value.trim()}`);
-  L.push('', '¿Me confirman si hay disponibilidad? 🙌');
+  L.push('', '¿Me confirman? 🙌');
   window.open(waUrl(L.join('\n')), '_blank', 'noopener');
   closeModal();
 });
